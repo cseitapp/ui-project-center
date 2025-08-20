@@ -26,3 +26,30 @@ const props = defineProps({
 
 const handleError = () => clearError({ redirect: "/" });
 </script>
+
+
+
+server {
+  listen 80;
+  server_name evaluation.cselao.la;
+  # Redirect HTTP to HTTPS
+  location / {
+      return 301 https://$host$request_uri;
+  }
+}
+server {
+   listen 443 ssl;
+   server_name evaluation.cselao.la;
+   ssl_certificate /etc/nginx/ssl/hrms_cselao_la.crt;
+   ssl_certificate_key /etc/nginx/ssl/hrms_cselao_la.key;
+   ssl_protocols TLSv1.2 TLSv1.3;
+   ssl_ciphers HIGH:!aNULL:!MD5;
+   location / {
+       proxy_pass http://20.10.100.71:2000; # UI service
+       proxy_set_header Host $host;
+       proxy_set_header X-Real-IP $remote_addr;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+       proxy_set_header X-Forwarded-Proto $scheme;
+   }
+}
+
