@@ -6,11 +6,11 @@ services:
       dockerfile: ./Dockerfile
     environment:
       NODE_ENV: production
-    # ports:
-    #   - 2000:2000
+  # ports:
+  #   - 2000:2000
 
   nginx:
-    container_name: nginx-ui-cse-check-in
+    container_name: nginx-ui-cse-project-center
     image: nginx:latest
     volumes:
       - ./conf.d:/etc/nginx/conf.d
