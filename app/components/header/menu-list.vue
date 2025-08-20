@@ -8,7 +8,11 @@
     density="compact"
     active-class="text-white"
   >
-    <v-list-item value="/home" color="primary" @click="onMenuClick(homeItem)">
+    <v-list-item
+      :value="guidelineItem.MENU_ID"
+      color="primary"
+      @click="onMenuClick(homeItem)"
+    >
       <template v-slot:prepend v-if="homeItem.CSS_ICON">
         <Icon
           :name="homeItem.ICON!"
@@ -44,7 +48,7 @@
     </div>
     <v-list-subheader class="text-secondary">{{ "ຄູ່ມື" }}</v-list-subheader>
     <v-list-item
-      value="/home"
+      :value="guidelineItem.MENU_ID"
       color="primary"
       @click="onMenuClick(guidelineItem)"
     >

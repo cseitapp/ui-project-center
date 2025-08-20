@@ -24,6 +24,6 @@
   },
   "devDependencies": {
     "vite-plugin-vuetify": "^2.1.2",
-    "vuetify": "^3.9.4"
+    "vuetify": "^3.9.5"
   }
 }

@@ -1,21 +1,21 @@
 FROM node:lts-alpine
 
-ENV NODE_ENV=production
 # Set the working directory inside the container
 WORKDIR /app
 
 # Copy package.json and pnpm-lock.yaml files to the working directory
-COPY package*.json ./
+COPY ./package.json /app/
 
 ## Install dependencies
 RUN npm install
 
 # Copy the rest of the application files to the working directory
-COPY . .
+COPY . /app
 COPY .env.production .env
 
 # Build the application
 RUN npm run build
+
 
 
 # Define environment variables
