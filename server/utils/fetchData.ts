@@ -1,4 +1,4 @@
-import { ResponseModel } from "~/types/responseModel";
+
 
 export default async function (
   path: String,
