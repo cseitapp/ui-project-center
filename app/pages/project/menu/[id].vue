@@ -777,6 +777,8 @@ const onLoadMenuRole = async () => {
     project_id: itemSelected.value?.PRO_ID,
     role_id: "",
   });
+  menuRoleSelected.value=[]
+  addNewMenuRoleModal.value=false
   nuxtApp.$closeLoading();
 };
 

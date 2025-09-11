@@ -83,7 +83,8 @@
         </template>
 
         <template v-slot:item.ROLE_NAME_LA="{ item }: any">
-          <v-chip label>
+          
+          <v-chip label @click="onEditItem(item)">
             <span class="text-primary">{{ item.ROLE_NAME_LA }}</span>
           </v-chip>
         </template>

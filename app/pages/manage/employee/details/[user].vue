@@ -103,10 +103,23 @@
                   color="secondary"
                   variant="tonal"
                   class="w-100 my-1"
-                  @click="viewOrganization('UP')"
+                  @click="viewOrganization('ALL')"
                   ><Icon
                     name="iconoir:network"
                     class="mr-1 text-success"
+                    size="1.2rem"
+                  ></Icon
+                  >ເບິ່ງຂໍ້ມູນສາຍງານທັງໝົດ</v-btn
+                >
+
+                <v-btn
+                  color="secondary"
+                  variant="tonal"
+                  class="w-100 my-1"
+                  @click="viewOrganization('UPPER')"
+                  ><Icon
+                    name="ph:network-light"
+                    class="mr-1 text-warning"
                     size="1.2rem"
                   ></Icon
                   >ເບິ່ງຂໍ້ມູນສາຍງານ (Upper)</v-btn
@@ -119,7 +132,7 @@
                   @click="viewOrganization('DOWN')"
                   ><Icon
                     name="ph:network-light"
-                    class="mr-1 text-warning"
+                    class="mr-1 text-error"
                     size="1.2rem"
                   ></Icon
                   >ເບິ່ງຂໍ້ມູນສາຍງານ (Under)</v-btn
@@ -1155,6 +1168,11 @@
                 rounded="lg"
                 elevation="0"
                 class="my-2"
+                :color="
+                  emp.USER_NAME.toUpperCase() == orgUserSeleted?.USER_NAME
+                    ? 'green-lighten-4'
+                    : ''
+                "
               >
                 <v-card-text>
                   <v-row :align="'center'" justify="center">
