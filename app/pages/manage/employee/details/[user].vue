@@ -12,7 +12,7 @@
 
     <div class="py-2">
       <div v-if="orgUserSeleted" class="mb-4">
-        <v-card elevation="0" rounded="xl">
+        <v-card elevation="0" rounded="lg">
           <v-card-text>
             <v-row>
               <v-col cols="12" sm="8" md="10">

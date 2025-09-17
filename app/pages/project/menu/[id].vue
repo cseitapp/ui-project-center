@@ -810,7 +810,10 @@ const onEditMenuItem = async (item: AllMenuModel) => {
     if (a.length > 0) {
       mainMenuSelected.value = a[0];
     }
+  }else{
+    mainMenuSelected.value=null
   }
+  
   action.value = utilStore.getActnoCode.UPDATE;
   addNewModal.value = true;
 };

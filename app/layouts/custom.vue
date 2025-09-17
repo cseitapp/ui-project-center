@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-app-bar scroll-behavior="elevate" elevation="0">
+    <v-app-bar scroll-behavior="elevate" elevation="1">
       <template v-slot:prepend>
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       </template>
@@ -66,7 +66,7 @@
 
     <v-navigation-drawer
       v-model="drawer"
-      style=" border: none"
+      style="border: none"
       class="gradient-bg-primary-bottom-top"
     >
       <template v-slot:prepend>

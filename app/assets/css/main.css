@@ -77,9 +77,9 @@ body {
 } */
 
 .app-bg {
-  /* background-color: rgb(227, 229, 234) !important; */
-  background: linear-gradient(135deg, hsl(210, 40%, 98%), hsl(221, 83%, 95%)) !important;
-  
+  background-color: rgb(229, 229, 229) !important;
+  /* background: linear-gradient(135deg, hsl(210, 40%, 98%), hsl(221, 83%, 95%)) !important; */
+  /* background: linear-gradient(135deg, hsl(210, 40%, 98%),hsl(210, 40%, 98%)) !important; */
 }
 
 .m-shadow {
