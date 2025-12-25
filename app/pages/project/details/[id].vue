@@ -23,7 +23,7 @@
         class="ma-1"
         @click="goToProjectRole(itemSelected?.PRO_ID)"
       >
-        <Icon name="lets-icons:setting-line" class="text-warning mr-1" />
+        <Icon name="lets-icons:setting-line" class="text-success mr-1" />
         ສິດເຂົ້າໃຊ້ລະບົບ
       </v-btn>
       <v-btn
@@ -32,7 +32,7 @@
         class="ma-1"
         @click="goToProjectMenu(itemSelected?.PRO_ID)"
       >
-        <Icon name="ep:menu" class="text-warning mr-1" />
+        <Icon name="ep:menu" class="text-info mr-1" />
         ຕັ້ງຄ່າເມນູ
       </v-btn>
     </v-row>

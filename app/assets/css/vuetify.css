@@ -71,11 +71,10 @@
 }
 
 .custom-table-header table > thead > tr > th {
-  background-color: rgb(41, 117, 187, 1) !important;
+  background-color: rgb(217, 217, 217) !important;
   /* background: var(--gradient-primary-bottom-top) !important; */
-  color: white !important;
+  color: rgb(83, 83, 83) !important;
   height: 45px !important;
-  color: #212121;
 }
 
 .v-data-table th {

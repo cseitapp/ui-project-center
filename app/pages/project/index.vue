@@ -4,7 +4,7 @@
       :search="txtSearch"
       :headers="tableHeaders"
       :items="dataList"
-      class="rounded-xl custom-table-header m-shadow"
+      class="rounded-lg custom-table-header m-shadow"
       density="comfortable"
       v-model:page="page"
       :items-per-page="itemsPerPage"
@@ -70,7 +70,10 @@
         ></code-to-text>
       </template>
       <template v-slot:item.ADDRESS="{ item }: any">
-        <a target="_blank" :href="item.ADDRESS">{{ item.ADDRESS }}</a>
+        <div v-if="item.PRO_TYPE == 'A'">
+          {{ item.ADDRESS }}
+        </div>
+        <a v-else target="_blank" :href="item.ADDRESS">{{ item.ADDRESS }}</a>
       </template>
       <template v-slot:item.PRO_STATUS="{ item }: any">
         <code-to-text
@@ -78,7 +81,13 @@
         ></code-to-text>
       </template>
       <template v-slot:item.ACTION="{ item }: any">
-        <v-btn variant="tonal" size="small" color="info" class="mx-1" @click="goToProjectDetail(item.PRO_ID)">
+        <v-btn
+          variant="tonal"
+          size="small"
+          color="info"
+          class="mx-1"
+          @click="goToProjectDetail(item.PRO_ID)"
+        >
           <Icon name="si:grid-view-duotone" class="text-info" />
         </v-btn>
         <v-btn
@@ -86,7 +95,7 @@
           size="small"
           color="warning"
           class="mx-1"
-            @click="goToAddNewItem(item.PRO_ID)"
+          @click="goToAddNewItem(item.PRO_ID)"
         >
           <Icon name="fa7-regular:edit" class="text-warning" />
         </v-btn>
@@ -138,6 +147,7 @@ const tableHeaders: any = ref([
     title: nuxtApp.$t("Address"),
     key: "ADDRESS",
     align: "start",
+    width: 100,
   },
   {
     title: nuxtApp.$t("status"),

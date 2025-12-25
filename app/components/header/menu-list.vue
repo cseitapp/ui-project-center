@@ -25,7 +25,7 @@
         v-text="homeItem.MENU_NAME_LA"
       ></v-list-item-title>
     </v-list-item>
-    <div v-for="i in mainMenu">
+    <div v-for="i in mainMenu" :key="i.MENU_ID">
       <v-list-subheader class="text-secondary">{{
         i.MENU_NAME_LA
       }}</v-list-subheader>
@@ -47,11 +47,7 @@
       </v-list-item>
     </div>
     <v-list-subheader class="text-secondary">{{ "ຄູ່ມື" }}</v-list-subheader>
-    <v-list-item
-      :value="guidelineItem.MENU_ID"
-      color="primary"
-      @click="onMenuClick(guidelineItem)"
-    >
+    <v-list-item color="primary" @click="onMenuClick(guidelineItem)">
       <template v-slot:prepend v-if="guidelineItem.CSS_ICON">
         <Icon
           :name="guidelineItem.ICON!"
