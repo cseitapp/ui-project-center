@@ -79,13 +79,14 @@
               </v-row>
 
               <p class="my-1">{{ $t("Address") }} (URL) :</p>
-              <v-text-field
+              <v-textarea
                 v-model="txtAddress"
+                rows="2"
                 color="primary"
                 variant="outlined"
                 density="compact"
                 :placeholder="$t('Address')"
-              ></v-text-field>
+              ></v-textarea>
               <v-row>
                 <v-col cols="12" sm="8">
                   <p class="my-1">IP Address :</p>
@@ -160,15 +161,14 @@ const txtAddress = ref();
 const rbProtocol = ref("HTTPS");
 const txtHost = ref();
 const txtPort = ref();
-const rbStatus:any = ref("A");
-const rbType:any = ref("W");
+const rbStatus: any = ref("A");
+const rbType: any = ref("W");
 const action = ref(utilStore.getActnoCode.INSERT);
 const itemSelected = ref<ProjectListModel>();
 
 onMounted(async () => {
   onInitLoading();
 });
-
 
 const onInitLoading = async () => {
   if (route.params.id != "NEW") {

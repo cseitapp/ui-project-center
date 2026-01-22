@@ -30,7 +30,7 @@
                 color="success"
                 variant="tonal"
                 class="mr-2"
-                @click="searchEmployeeModal=true"
+                @click="searchEmployeeModal = true"
                 ><Icon
                   name="line-md:plus"
                   class="mr-1 text-success"

@@ -710,6 +710,7 @@ const mainMenuSelected = ref<AllMenuModel | null>();
 const txtDesc = ref();
 const txtColor = ref("#FFFFFF");
 const fileUpload = ref();
+const txtIconPath = ref("");
 
 const roleIdSelected = ref("");
 const menuRoleSelected = ref<MenuModel[]>([]);
@@ -757,6 +758,8 @@ const goToAddNewItem = async (id: any) => {
   txtPath.value = "";
   txtDesc.value = "";
   txtColor.value = "#FFFFFF";
+  fileUpload.value = null;
+  txtIconPath.value = "";
   mainMenuSelected.value = null;
   action.value = utilStore.getActnoCode.INSERT;
   addNewModal.value = true;
@@ -777,8 +780,8 @@ const onLoadMenuRole = async () => {
     project_id: itemSelected.value?.PRO_ID,
     role_id: "",
   });
-  menuRoleSelected.value=[]
-  addNewMenuRoleModal.value=false
+  menuRoleSelected.value = [];
+  addNewMenuRoleModal.value = false;
   nuxtApp.$closeLoading();
 };
 
@@ -795,7 +798,7 @@ const onEditMenuItem = async (item: AllMenuModel) => {
   menuSelected.value = item;
   txtNameLa.value = item.MENU_NAME_LA;
   txtNameEn.value = item.MENU_NAME_EN;
-
+  txtIconPath.value = item.ICON;
   rbStatus.value = item.ENABLE.toString();
   txtCssIcon.value = item.CSS_ICON;
   rbType.value = item.TYPE;
@@ -803,6 +806,7 @@ const onEditMenuItem = async (item: AllMenuModel) => {
   txtPath.value = item.PATH;
   txtDesc.value = item.MENU_DESC;
   txtColor.value = item.COLOR;
+  fileUpload.value = null;
   if (item.TYPE == "S") {
     var a = menuStore.getAllMenuList.filter(
       (el) => el.MENU_ID == item.SUB_MENU_ID
@@ -810,10 +814,10 @@ const onEditMenuItem = async (item: AllMenuModel) => {
     if (a.length > 0) {
       mainMenuSelected.value = a[0];
     }
-  }else{
-    mainMenuSelected.value=null
+  } else {
+    mainMenuSelected.value = null;
   }
-  
+
   action.value = utilStore.getActnoCode.UPDATE;
   addNewModal.value = true;
 };
@@ -822,8 +826,12 @@ const onInserUpdateMenuItem = async (item: UserRoleModel) => {
   const { valid } = await myForm.value.validate();
   if (valid) {
     nuxtApp.$openLoading();
-    var iconPath = "";
-    if (fileUpload.value && action.value == utilStore.getActnoCode.UPDATE) {
+    var iconPath = txtIconPath.value;
+    if (fileUpload.value) {
+      // REMOVE OLD FILE
+      if (menuSelected.value?.ICON) {
+        await fileStore.acRemoveFile({ path: menuSelected.value?.ICON });
+      }
       iconPath =
         "/" + nuxtApp.$env.projectID + "/MENU/" + menuSelected.value?.MENU_ID;
       await uploadFile(iconPath)
@@ -835,9 +843,7 @@ const onInserUpdateMenuItem = async (item: UserRoleModel) => {
         .catch((err) => {
           return;
         });
-
-      // REMOVE OLD FILE
-      await fileStore.acRemoveFile({ path: menuSelected.value?.ICON });
+      iconPath = iconPath + "/" + fileUpload.value.name;
     }
 
     var body = {
@@ -845,7 +851,7 @@ const onInserUpdateMenuItem = async (item: UserRoleModel) => {
       menu_id: menuSelected.value?.MENU_ID,
       user: loginStore.loginUser?.USER_NAME,
       status: rbStatus.value,
-      icon: iconPath ? iconPath + "/" + fileUpload.value.name : "",
+      icon: iconPath ? iconPath : "",
       css_icon: txtCssIcon.value,
       type: rbType.value,
       color: txtColor.value,
