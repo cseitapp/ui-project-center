@@ -108,7 +108,7 @@
               </v-btn>
             </template>
           </v-tooltip>
-          <pages-passcode-reset-modal :item="item"></pages-passcode-reset-modal>
+          <pages-passcode-reset-modal :item="item" v-if="nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE)"></pages-passcode-reset-modal>
           <pages-passcode-change-modal
             :item="item"
           ></pages-passcode-change-modal>
@@ -198,7 +198,8 @@ const tableHeaders: any = ref([
 onMounted(async () => {
   await onLoadPasscodeList();
   await passcodeStore.acGetPasscodeType({ status: "A" });
-  await await employeeStore.acGetEmployeeList({});
+  await employeeStore.acGetEmployeeList({});
+  
 });
 
 const onLoadPasscodeList = async () => {

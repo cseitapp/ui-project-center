@@ -37,7 +37,6 @@
           rounded="lg"
           :label="$t('Search')"
           :placeholder="$t('Search')"
-          
         ></v-text-field
       ></v-col>
     </v-row>
@@ -45,6 +44,7 @@
       :items="dataList"
       :page="page"
       :items-per-page="itemsPerPage"
+      :search="txtSearch"
     >
       <template #no-data>
         <div class="text-center">
@@ -67,7 +67,13 @@
                     <tr>
                       <td>{{ nuxtApp.$t("id") }}:</td>
 
-                      <td class="text-right"><v-chip label><h4 class="text-primary">{{ item.raw.PRO_ID }}</h4></v-chip></td>
+                      <td class="text-right">
+                        <v-chip label
+                          ><h4 class="text-primary">
+                            {{ item.raw.PRO_ID }}
+                          </h4></v-chip
+                        >
+                      </td>
                     </tr>
 
                     <tr>
@@ -125,7 +131,6 @@
                 <v-divider></v-divider>
                 <v-row class="mx-0 mt-2 mb-0" :align="'center'" justify="end">
                   <v-btn
-               
                     variant="tonal"
                     size="small"
                     color="secondary"
@@ -135,7 +140,6 @@
                     <Icon name="hugeicons:view" class="text-info" />
                   </v-btn>
                   <v-btn
-                
                     variant="tonal"
                     size="small"
                     color="secondary"
@@ -145,7 +149,6 @@
                     <Icon name="fa7-regular:edit" class="text-warning" />
                   </v-btn>
                   <v-btn
-              
                     variant="tonal"
                     size="small"
                     color="secondary"
@@ -166,6 +169,7 @@
           :length="pageCount"
           density="compact"
           class="mt-4"
+          color="primary"
         ></v-pagination>
       </template>
     </v-data-iterator>

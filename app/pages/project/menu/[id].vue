@@ -37,7 +37,7 @@
             :class="tab == 1 ? 'text-primary' : ''"
           ></Icon>
 
-          All Menu
+          ເມນູທັງໝົດ
         </v-tab>
 
         <v-tab :value="2">
@@ -47,7 +47,7 @@
             :class="tab == 2 ? 'text-primary' : ''"
           ></Icon>
 
-          Menu Role
+          ສິດການນຳໃຊ້
         </v-tab>
       </v-tabs>
 
@@ -60,10 +60,10 @@
               )"
             >
               <v-divider></v-divider>
-              <div class="text-secondary">
+              <div>
                 <v-row class="ma-0">
                   <v-col>
-                    <span> {{ m.MENU_NAME_LA }}</span> </v-col
+                    <h3>{{ m.MENU_NAME_LA }}</h3> </v-col
                   ><v-spacer></v-spacer>
                   <v-btn
                     variant="text"

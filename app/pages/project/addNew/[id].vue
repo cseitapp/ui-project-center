@@ -16,7 +16,7 @@
     </v-row>
 
     <v-row justify="center">
-      <v-col cols="12" sm="8" md="6" lg="5">
+      <v-col cols="12" md="10" lg="8">
         <v-card elevation="0" class="m-shadow rounded-lg">
           <v-card-title class="text-center">
             <h3>ເພີ່ມຂໍ້ມູນລະບົບ</h3>
@@ -24,31 +24,32 @@
           <v-divider></v-divider>
           <v-card-text>
             <v-form ref="myForm">
-              <p class="my-1">
-                {{ $t("name") }} <span class="text-error mr-1">*</span>:
-              </p>
-              <v-text-field
-                v-model="txtNameLa"
-                color="primary"
-                variant="outlined"
-                density="compact"
-                :placeholder="$t('name')"
-                :rules="[(v) => $textFieldRule(v)]"
-              ></v-text-field>
-              <p class="my-1">
-                {{ $t("name") }} (EN) <span class="text-error mr-1">*</span>:
-              </p>
-              <v-text-field
-                v-model="txtNameEn"
-                color="primary"
-                variant="outlined"
-                density="compact"
-                :placeholder="$t('name')"
-                :rules="[(v) => $textFieldRule(v)]"
-              ></v-text-field>
-
               <v-row>
-                <v-col cols="12" sm="6">
+                <v-col cols="12" md="6">
+                  <p class="my-1">
+                    {{ $t("name") }} <span class="text-error mr-1">*</span>:
+                  </p>
+                  <v-text-field
+                    v-model="txtNameLa"
+                    color="primary"
+                    variant="outlined"
+                    density="compact"
+                    :placeholder="$t('name')"
+                    :rules="[(v) => $textFieldRule(v)]"
+                  ></v-text-field>
+                  <p class="my-1">
+                    {{ $t("name") }} (EN)
+                    <span class="text-error mr-1">*</span>:
+                  </p>
+                  <v-text-field
+                    v-model="txtNameEn"
+                    color="primary"
+                    variant="outlined"
+                    density="compact"
+                    :placeholder="$t('name')"
+                    :rules="[(v) => $textFieldRule(v)]"
+                  ></v-text-field>
+
                   <v-radio-group inline :label="$t('type')" v-model="rbType">
                     <v-radio
                       v-for="(item, index) in projectStore.getProjectType"
@@ -57,8 +58,29 @@
                       :class="item.CLASS"
                     ></v-radio>
                   </v-radio-group>
+                  <v-combobox
+                    v-model="groupSelected"
+                    :items="projectStore.getProjecGroup"
+                    density="compact"
+                    autocomplete="off"
+                    item-title="GROUP_NAME"
+                    item-value="GROUP_ID"
+                    :label="'ກຸ່ມລະບົບ'"
+                    color="primary"
+                    variant="outlined"
+                    :rules="[(v) => $selectionRule(v)]"
+                  ></v-combobox>
                 </v-col>
-                <v-col cols="12" sm="6">
+                <v-col cols="12" md="6">
+                  <p class="my-1">{{ $t("Address") }} (URL) :</p>
+                  <v-textarea
+                    v-model="txtAddress"
+                    rows="2"
+                    color="primary"
+                    variant="outlined"
+                    density="compact"
+                    :placeholder="$t('Address')"
+                  ></v-textarea>
                   <v-radio-group
                     inline
                     :label="'Protocol'"
@@ -75,51 +97,47 @@
                       color="warning"
                     ></v-radio>
                   </v-radio-group>
+                  <v-row>
+                    <v-col cols="12" sm="8">
+                      <p class="my-1">IP Address :</p>
+                      <v-text-field
+                        v-model="txtHost"
+                        color="primary"
+                        variant="outlined"
+                        density="compact"
+                        :placeholder="' IP Address'"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col>
+                      <p class="my-1">Port:</p>
+                      <v-text-field
+                        v-model="txtPort"
+                        color="primary"
+                        variant="outlined"
+                        density="compact"
+                        :placeholder="'Port'"
+                        type="number"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                  <v-radio-group
+                    inline
+                    :label="$t('status')"
+                    v-model="rbStatus"
+                  >
+                    <v-row class="my-0">
+                      <v-radio
+                        v-for="(
+                          item, index
+                        ) in utilStore.getActiveUnActiveStatus"
+                        :label="item.TEXT"
+                        :value="item.CODE"
+                        :class="item.CLASS"
+                      ></v-radio>
+                    </v-row>
+                  </v-radio-group>
                 </v-col>
               </v-row>
-
-              <p class="my-1">{{ $t("Address") }} (URL) :</p>
-              <v-textarea
-                v-model="txtAddress"
-                rows="2"
-                color="primary"
-                variant="outlined"
-                density="compact"
-                :placeholder="$t('Address')"
-              ></v-textarea>
-              <v-row>
-                <v-col cols="12" sm="8">
-                  <p class="my-1">IP Address :</p>
-                  <v-text-field
-                    v-model="txtHost"
-                    color="primary"
-                    variant="outlined"
-                    density="compact"
-                    :placeholder="' IP Address'"
-                  ></v-text-field>
-                </v-col>
-                <v-col>
-                  <p class="my-1">Port:</p>
-                  <v-text-field
-                    v-model="txtPort"
-                    color="primary"
-                    variant="outlined"
-                    density="compact"
-                    :placeholder="'Port'"
-                    type="number"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-              <v-radio-group inline :label="$t('status')" v-model="rbStatus">
-                <v-row class="my-0">
-                  <v-radio
-                    v-for="(item, index) in utilStore.getActiveUnActiveStatus"
-                    :label="item.TEXT"
-                    :value="item.CODE"
-                    :class="item.CLASS"
-                  ></v-radio>
-                </v-row>
-              </v-radio-group>
             </v-form>
           </v-card-text>
           <v-divider></v-divider>
@@ -164,6 +182,7 @@ const txtPort = ref();
 const rbStatus: any = ref("A");
 const rbType: any = ref("W");
 const action = ref(utilStore.getActnoCode.INSERT);
+const groupSelected = ref<ProjectGroupModel>();
 const itemSelected = ref<ProjectListModel>();
 
 onMounted(async () => {
@@ -171,6 +190,7 @@ onMounted(async () => {
 });
 
 const onInitLoading = async () => {
+  await projectStore.acGetProjectGroup({ status: "A" });
   if (route.params.id != "NEW") {
     if (projectStore.getProjectList.length <= 0) {
       await onLoadProjectList();
@@ -184,11 +204,21 @@ const onInitLoading = async () => {
       txtNameLa.value = item?.PRO_NAME_LA;
       txtNameEn.value = item?.PRO_NAME_EN;
       rbType.value = item?.PRO_TYPE;
-      rbProtocol.value = item?.PROTOCOL;
+      rbProtocol.value = item?.PROTOCOL ?? "";
       txtAddress.value = item?.ADDRESS;
       txtHost.value = item?.HOST;
       txtPort.value = item?.PORT;
       rbStatus.value = item?.PRO_STATUS;
+      if (
+        projectStore.getProjecGroup.filter(
+          (el) => el.GROUP_ID == item?.GROUP_ID
+        ).length > 0
+      ) {
+        groupSelected.value = projectStore.getProjecGroup.filter(
+          (el) => el.GROUP_ID == item?.GROUP_ID
+        )[0];
+      }
+
       action.value = utilStore.getActnoCode.UPDATE;
     } else {
       nuxtApp.$openAlert("E", "No project info").then(async (r: any) => {
@@ -217,6 +247,7 @@ const onInsertItem = async () => {
       port: txtPort.value,
       status: rbStatus.value,
       type: rbType.value,
+      group_id: groupSelected.value?.GROUP_ID,
       user: loginStore.loginUser?.USER_NAME,
       action: action.value,
     };
