@@ -204,7 +204,7 @@ const tableHeaders: any = ref([
   },
 ]);
 
-const addNewModal = ref(true);
+const addNewModal = ref(false);
 const myForm = ref();
 const txtGroupId = ref("");
 const txtName = ref("");

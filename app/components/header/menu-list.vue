@@ -9,8 +9,8 @@
     active-class="text-white"
   >
     <v-list-item
-      :value="guidelineItem.MENU_ID"
-      color="primary"
+      :value="homeItem.MENU_ID"
+      color="white"
       @click="onMenuClick(homeItem)"
     >
       <template v-slot:prepend v-if="homeItem.CSS_ICON">
@@ -47,7 +47,11 @@
       </v-list-item>
     </div>
     <v-list-subheader class="text-secondary">{{ "ຄູ່ມື" }}</v-list-subheader>
-    <v-list-item color="primary" @click="onMenuClick(guidelineItem)">
+    <v-list-item
+      color="white"
+      @click="onMenuClick(guidelineItem)"
+      :value="guidelineItem.MENU_ID"
+    >
       <template v-slot:prepend v-if="guidelineItem.CSS_ICON">
         <Icon
           :name="guidelineItem.ICON!"

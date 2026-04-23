@@ -27,6 +27,13 @@ export const useProjectStore = defineStore("project", {
       HTTPS: "HTTPS",
       HTTP: "HTTP",
     }),
+
+    getProjectStatus: (): CodeAndTextModel[] => [
+      { CODE: "D", TEXT: nuxtApp.$t("underDevelopment"), CLASS: "text-warning", },
+      { CODE: "A", TEXT: nuxtApp.$t("Active"), CLASS: "text-success" },
+      { CODE: "U", TEXT: nuxtApp.$t("Unactive"), CLASS: "text-error" },
+    ],
+
   },
   actions: {
     acGetProjectList(body: Object | null) {

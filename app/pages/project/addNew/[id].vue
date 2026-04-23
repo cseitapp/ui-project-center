@@ -49,15 +49,18 @@
                     :placeholder="$t('name')"
                     :rules="[(v) => $textFieldRule(v)]"
                   ></v-text-field>
-
-                  <v-radio-group inline :label="$t('type')" v-model="rbType">
-                    <v-radio
-                      v-for="(item, index) in projectStore.getProjectType"
-                      :label="item.TEXT"
-                      :value="item.CODE"
-                      :class="item.CLASS"
-                    ></v-radio>
-                  </v-radio-group>
+                  <p class="my-1">Icon:</p>
+                  <v-text-field
+                    v-model="txtIcon"
+                    color="primary"
+                    variant="outlined"
+                    density="compact"
+                    placeholder="Icon"
+                  ></v-text-field>
+                  <p class="my-1">
+                    ກຸ່ມລະບົບ
+                    <span class="text-error mr-1">*</span>:
+                  </p>
                   <v-combobox
                     v-model="groupSelected"
                     :items="projectStore.getProjecGroup"
@@ -70,6 +73,16 @@
                     variant="outlined"
                     :rules="[(v) => $selectionRule(v)]"
                   ></v-combobox>
+                  
+                  <v-radio-group inline :label="$t('type')" v-model="rbType">
+                    <v-radio
+                      v-for="(item, index) in projectStore.getProjectType"
+                      :label="item.TEXT"
+                      :value="item.CODE"
+                      :class="item.CLASS"
+                    ></v-radio>
+                  </v-radio-group>
+                  
                 </v-col>
                 <v-col cols="12" md="6">
                   <p class="my-1">{{ $t("Address") }} (URL) :</p>
@@ -129,7 +142,7 @@
                       <v-radio
                         v-for="(
                           item, index
-                        ) in utilStore.getActiveUnActiveStatus"
+                        ) in projectStore.getProjectStatus"
                         :label="item.TEXT"
                         :value="item.CODE"
                         :class="item.CLASS"
@@ -176,6 +189,7 @@ const myForm = ref();
 const txtNameLa = ref();
 const txtNameEn = ref();
 const txtAddress = ref();
+const txtIcon = ref();
 const rbProtocol = ref("HTTPS");
 const txtHost = ref();
 const txtPort = ref();
@@ -204,6 +218,7 @@ const onInitLoading = async () => {
       txtNameLa.value = item?.PRO_NAME_LA;
       txtNameEn.value = item?.PRO_NAME_EN;
       rbType.value = item?.PRO_TYPE;
+      txtIcon.value = item?.PRO_ICON;
       rbProtocol.value = item?.PROTOCOL ?? "";
       txtAddress.value = item?.ADDRESS;
       txtHost.value = item?.HOST;
@@ -247,6 +262,7 @@ const onInsertItem = async () => {
       port: txtPort.value,
       status: rbStatus.value,
       type: rbType.value,
+      icon: txtIcon.value,
       group_id: groupSelected.value?.GROUP_ID,
       user: loginStore.loginUser?.USER_NAME,
       action: action.value,

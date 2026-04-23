@@ -10,6 +10,7 @@ export interface ProjectListModel {
   CREATED_BY: string;
   CREATED_AT: string;
   PRO_TYPE: string;
+  PRO_ICON: string;
   GROUP_ID: number;
   GROUP_NAME: string;
   GROUP_ORDER: number;

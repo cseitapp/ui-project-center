@@ -119,7 +119,7 @@
                       <td class="text-right">
                         <code-to-text
                           :data="
-                            utilStore.acGetActiveUnactiveStatus(
+                            utilStore.acGetCodetoText(projectStore.getProjectStatus,
                               item.raw.PRO_STATUS
                             )
                           "
