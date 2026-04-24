@@ -17,7 +17,7 @@ export const useLoginStore = defineStore("login", {
         async (
           resolve: (val: ResponseModel) => any,
           reject: (val: string) => any
-        ) => {        
+        ) => {
           await $fetch(nuxtApp.$env.serverProjectCenter + "/login", {
             method: "POST",
             body: body,
@@ -30,7 +30,7 @@ export const useLoginStore = defineStore("login", {
                   this.user = result.DATA[0];
                 }
                 resolve(result);
-              } catch (error) {                
+              } catch (error) {
                 reject(nuxtApp.$t("somthingWrong"));
               }
             })
@@ -72,6 +72,12 @@ export const useLoginStore = defineStore("login", {
           }
         }
       );
+    },
+
+    async logOutSystem() {
+      const name = nuxtApp.$env.authCookieName;
+      var myCookie: any = useCookie(name);
+      myCookie.value = null;
     },
   },
 });

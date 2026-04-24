@@ -18,7 +18,8 @@ const logout = () => {
   //@ts-ignore
   nuxtApp
     .$openAlert("Q", nuxtApp.$t("AreYouSureToLogout"))
-    .then((r: any) => {
+    .then(async (r: any) => {
+      await loginStore.logOutSystem();
       //@ts-ignore
       nuxtApp.$router.push("/");
     })
