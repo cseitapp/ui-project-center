@@ -78,13 +78,10 @@ export const useLoginStore = defineStore("login", {
       // const name = nuxtApp.$env.authCookieName;
       // var myCookie: any = useCookie(name);
       // myCookie.value = null;
-      await $fetch(nuxtApp.$env.serverProjectCenter, {
+      await $fetch(nuxtApp.$env.serverProjectCenter + "/logout", {
         method: "POST",
-        body: {
-          path: "/api/logout",
-          body: {},
-        },
-      });
+        body: {},
+      })
     },
   },
 });
