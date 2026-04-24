@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <div class="text-center mb-4">
+    <div class="text-center mb-2">
       <img src="~/assets/img/logo/logo_cse.png" height="80" />
       <h2 class="text-secondary">ຍິນດີຕ້ອນຮັບເຂົ້າສູ່ລະບົບ CSE Community</h2>
     </div>
@@ -32,13 +32,135 @@
                 rounded="xl"
                 elevation="0"
                 class="ma-2 m-cursor"
-                min-width="180"
-                @click="goToProject(pro.ADDRESS)"
+                min-width="160"
               >
-                <v-card-text class="text-center">
-                  <Icon :name="pro.PRO_ICON" size="5rem" />
-                  <p>{{ pro.PRO_NAME_LA }}</p>
-                  <p class="text-second">{{ pro.PRO_NAME_EN }}</p>
+                <v-card-title>
+                  <v-row class="ma-0" :align="'center'">
+                    <div>
+                      <code-to-text
+                        v-if="pro.PRO_STATUS != 'A'"
+                        :data="
+                          utilStore.acGetCodetoText(
+                            projectStore.getProjectStatus,
+                            pro.PRO_STATUS
+                          )
+                        "
+                        class="mr-2 text-second"
+                      ></code-to-text>
+                    </div>
+                    <v-spacer></v-spacer>
+                    <v-menu>
+                      <template v-slot:activator="{ props }">
+                        <Icon
+                          name="pepicons-pop:dots-y"
+                          style="cursor: pointer"
+                          v-bind="props"
+                        />
+                      </template>
+
+                      <v-card rounded="lg">
+                        <v-card-text>
+                          <v-table>
+                            <tr>
+                              <td class="text-right pr-2">
+                                <span class="text-secondary mr-1"
+                                  >{{ $t("id") }}:
+                                </span>
+                              </td>
+                              <td>
+                                <v-chip class="mb-2" label color="success">
+                                  {{ pro?.PRO_ID }}</v-chip
+                                >
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="text-right pr-2">
+                                <span class="text-secondary mr-1"
+                                  >ຊື່ລະບົບ:</span
+                                >
+                              </td>
+                              <td>
+                                <div>
+                                  <p>
+                                    {{ pro?.PRO_NAME_LA }}
+                                  </p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="text-right pr-2">
+                                <span class="text-secondary mr-1"
+                                  >ຊື່ພາສາອັງກິດ:</span
+                                >
+                              </td>
+                              <td>
+                                <div>
+                                  <p>
+                                    {{ pro?.PRO_NAME_EN }}
+                                  </p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="text-right pr-2">
+                                <span class="text-secondary mr-1"
+                                  >{{ $t("type") }}:</span
+                                >
+                              </td>
+                              <td>
+                                <code-to-text
+                                  :data="
+                                    utilStore.acGetCodetoText(
+                                      projectStore.getProjectType,
+                                      pro?.PRO_TYPE
+                                    )
+                                  "
+                                ></code-to-text>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="text-right pr-2">
+                                <span class="text-secondary mr-1"
+                                  >{{ $t("Address") }}:</span
+                                >
+                              </td>
+                              <td>
+                                <a :href="pro?.ADDRESS" target="_blank">
+                                  {{ pro?.ADDRESS }}</a
+                                >
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="text-right pr-2">
+                                <span class="text-secondary mr-1"
+                                  >{{ $t("status") }}:</span
+                                >
+                              </td>
+                              <td>
+                                <code-to-text
+                                  :data="
+                                    utilStore.acGetActiveUnactiveStatus(
+                                      pro?.PRO_STATUS
+                                    )
+                                  "
+                                ></code-to-text>
+                              </td>
+                            </tr>
+                          </v-table>
+                        </v-card-text>
+                      </v-card>
+                    </v-menu>
+                  </v-row>
+                </v-card-title>
+                <v-card-text
+                  class="text-right"
+                  @click="goToProject(pro.ADDRESS)"
+                >
+                  <div class="text-center">
+                    <Icon :name="pro.PRO_ICON" size="5rem" />
+                    <p>{{ pro.PRO_NAME_LA }}</p>
+                    <p class="text-second">{{ pro.PRO_NAME_EN }}</p>
+                  </div>
                 </v-card-text>
               </v-card>
             </div>
@@ -50,6 +172,8 @@
 </template>
 
 <script setup lang="ts">
+import { Icon } from "#components";
+
 definePageMeta({
   layout: "custom",
   middleware: ["auth", "menu"],
@@ -57,6 +181,7 @@ definePageMeta({
 
 const nuxtApp = useNuxtApp();
 const projectStore = useProjectStore();
+const utilStore = useUtilStore();
 
 const dataList = ref<ProjectListModel[]>([]);
 

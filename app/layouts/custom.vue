@@ -137,8 +137,8 @@
 export default {
   async setup() {
     const nuxtApp = useNuxtApp();
-    const drawer = ref(true);
     const loginStore = useLoginStore();
+    
     // const orgStore = useOrgStore();
 
     // onMounted(async () => {
@@ -152,6 +152,7 @@ export default {
     // if (nuxtApp.$isDirector(loginStore.loginUser?.ROLE_CODE)) {
     //   await orgStore.acGetSectionDirectorList(loginStore.loginUser.USER_NAME);
     // }
+    const drawer = ref(!nuxtApp.$isGeneral(loginStore.loginUser.ROLE_CODE));
 
     return {
       drawer,

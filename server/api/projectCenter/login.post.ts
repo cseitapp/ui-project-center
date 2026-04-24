@@ -26,8 +26,9 @@ export default defineEventHandler(async (event) => {
         var userData = JSON.stringify(res.DATA[0]);
         const ciphertext = await encrypt(userData, config().authCookieKey);
         await setCookie(event, config().authCookieName, ciphertext, {
-          httpOnly: false,
+          httpOnly: true,
           sameSite: true,
+          secure: true,
           maxAge: cookieLife, // 1day
         });
         event.context.auth = userData;

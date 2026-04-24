@@ -29,9 +29,9 @@ export const useProjectStore = defineStore("project", {
     }),
 
     getProjectStatus: (): CodeAndTextModel[] => [
-      { CODE: "D", TEXT: nuxtApp.$t("underDevelopment"), CLASS: "text-warning", },
-      { CODE: "A", TEXT: nuxtApp.$t("Active"), CLASS: "text-success" },
-      { CODE: "U", TEXT: nuxtApp.$t("Unactive"), CLASS: "text-error" },
+      { CODE: "D", TEXT: nuxtApp.$t("underDevelopment"), CLASS: "text-warning", ICON:"typcn:code-outline" },
+      { CODE: "A", TEXT: nuxtApp.$t("Active"), CLASS: "text-success", ICON:"solar:check-read-bold" },
+      { CODE: "U", TEXT: nuxtApp.$t("Unactive"), CLASS: "text-error" , ICON:"solar:close-square-broken"},
     ],
 
   },

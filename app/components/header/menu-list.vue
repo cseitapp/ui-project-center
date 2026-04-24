@@ -1,13 +1,8 @@
 <template>
-  <div v-if="menuList.length <= 0" class="text-center py-4">
+  <!-- <div v-if="menuList.length <= 0" class="text-center py-4">
     <no-data></no-data>
-  </div>
-  <v-list
-    v-else
-    v-model="menuSelected"
-    density="compact"
-    active-class="text-white"
-  >
+  </div> -->
+  <v-list v-model="menuSelected" density="compact" active-class="text-white">
     <v-list-item
       :value="homeItem.MENU_ID"
       color="white"
