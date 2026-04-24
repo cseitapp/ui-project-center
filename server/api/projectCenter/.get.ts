@@ -5,6 +5,7 @@ import isSendError from "../../utils/isSendError";
 
 export default defineEventHandler(async (event) => {
   const body: any = await getQuery(event);
+
   if (!isAuth) {
     return;
   }

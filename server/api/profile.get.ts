@@ -1,4 +1,4 @@
-import isAuth from "../utils/isAuth";
+// import isAuth from "../utils/isAuth";
 import config from "../utils/config";
 
 export default defineEventHandler((event) => {

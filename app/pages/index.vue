@@ -148,6 +148,8 @@ const onSubmit = async () => {
     loginStore
       .loginSystem(body)
       .then(async (result: ResponseModel) => {
+        console.log(result);
+        
         if (result.ERROR_CODE == "00") {
           menuStore
             .acGetLoginMenuList({
