@@ -1,5 +1,9 @@
+import isAuth from "../utils/isAuth";
+
 export default defineEventHandler((event) => {
   console.log(123);
+  console.log("1", isAuth);
+  console.log("2", !isAuth);
 
   const cookies = parseCookies(event);
   const origin = getHeader(event, "origin");
@@ -24,13 +28,16 @@ export default defineEventHandler((event) => {
   }
 
   const token = cookies;
+  console.log("event.context.auth", event.context.auth);
 
   if (!token) {
-    return { error: "No token", cookies: cookies };
+    return { message: "Please login", status: false };
   }
 
   return {
     message: "User authenticated",
+    status: true,
     token,
+    user: event.context.auth,
   };
 });
