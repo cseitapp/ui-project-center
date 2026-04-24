@@ -30,7 +30,7 @@ export default defineEventHandler((event) => {
   const token = cookies;
   console.log("event.context.auth", event.context.auth);
 
-  if (!token) {
+  if (!event.context.auth) {
     return { message: "Please login", status: false };
   }
 
