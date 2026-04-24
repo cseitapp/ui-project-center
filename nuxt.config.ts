@@ -61,6 +61,8 @@ export default defineNuxtConfig({
     authCookieKey: process.env.AUTH_COOKIE_KEY,
     authCookieName: process.env.AUTH_COOKIE_NAME,
     cookieLife: process.env.COOKIE_LIFT,
+    allowOrigin:process.env.ALLOW_ORIGIN,
+    domain:process.env.DOMAIN,
 
     public: {
       clientVersion: pkg.version,

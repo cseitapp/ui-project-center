@@ -1,3 +1,5 @@
+import config from "../../utils/config";
+
 export default defineEventHandler((event) => {
   const cookies = parseCookies(event);
   console.log(cookies);
@@ -5,7 +7,7 @@ export default defineEventHandler((event) => {
   for (const name in cookies) {
     deleteCookie(event, name, {
       path: "/",
-      domain: ".cselao.la",
+      domain: config().domain,
     });
   }
 

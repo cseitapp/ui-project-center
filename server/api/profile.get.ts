@@ -1,16 +1,12 @@
 import isAuth from "../utils/isAuth";
+import config from "../utils/config";
 
 export default defineEventHandler((event) => {
-  console.log(123);
-  console.log("1", isAuth);
-  console.log("2", !isAuth);
-
   const cookies = parseCookies(event);
   const origin = getHeader(event, "origin");
-  console.log(origin);
 
   // allow only your frontend domain
-  const allowedOrigins = ["https://edocument.cselao.la"];
+  const allowedOrigins = config().allowOrigin; ///["https://edocument.cselao.la"];
 
   if (origin && allowedOrigins.includes(origin)) {
     setHeader(event, "Access-Control-Allow-Origin", origin);
@@ -27,8 +23,8 @@ export default defineEventHandler((event) => {
     );
   }
 
-  const token = cookies;
-  console.log("event.context.auth", event.context.auth);
+  // const token = cookies;
+  // console.log("event.context.auth", event.context.auth);
 
   if (!event.context.auth) {
     return { message: "Please login", status: false };
@@ -37,7 +33,7 @@ export default defineEventHandler((event) => {
   return {
     message: "User authenticated",
     status: true,
-    token,
-    user: event.context.auth,
+    // token,
+    user: event.context.auth.USER_NAME,
   };
 });

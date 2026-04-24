@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
         var userData = JSON.stringify(res.DATA[0]);
         const ciphertext = await encrypt(userData, config().authCookieKey);
         await setCookie(event, config().authCookieName, ciphertext, {
-          domain: ".cselao.la",
+          domain: config().domain,
           httpOnly: true,
           sameSite: "lax", // or 'none' if needed
           secure: true,
