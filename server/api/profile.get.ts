@@ -23,10 +23,10 @@ export default defineEventHandler((event) => {
     );
   }
 
-  const token = cookies.token;
+  const token = cookies;
 
   if (!token) {
-    return { error: "No token" };
+    return { error: "No token", cookies: cookies };
   }
 
   return {
