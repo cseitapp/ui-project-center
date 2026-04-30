@@ -22,25 +22,10 @@
                     size="1.8rem"
                     class="mr-1"
                   />
-                  <span class="text-title"><b>ຂໍ້ມູນຄຸ້ມຄອງພະນັກງານ</b></span>
+                  <span class="text-title"><b>ຂໍ້ມູນຜູ້ໃຊ້ລະບົບ</b></span>
                 </v-row>
               </div>
               <v-spacer></v-spacer>
-              <!-- <v-btn
-                color="success"
-                variant="tonal"
-                class="mr-2"
-                @click="searchEmployeeModal = true"
-                ><Icon
-                  name="line-md:plus"
-                  class="mr-1 text-success"
-                  size="1.2rem"
-                ></Icon
-                >{{ $t("addNew") }}</v-btn
-              > -->
-              <pages-passcode-addnew-modal
-                @on-success="onLoadPasscodeList"
-              ></pages-passcode-addnew-modal>
             </v-row>
           </v-col>
           <v-col
@@ -63,29 +48,27 @@
         <no-data></no-data>
       </template>
 
-      <template v-slot:item.PUREPOSE="{ item }: any">
+      <template v-slot:item.USER_NAME="{ item }: any">
         <v-chip label color="primary">
-          {{ item.PUREPOSE }}
+          {{ item.USER_NAME }}
         </v-chip>
       </template>
 
-      <template v-slot:item.PASSCODE_STATUS="{ item }: any">
+      <template v-slot:item.USER_STATUS="{ item }: any">
         <v-radio-group
           inline
-          v-model="item.PASSCODE_STATUS"
+          v-model="item.USER_STATUS"
           hide-details
-          @update:model-value="onUpdateStatus(item)"
           justify="end"
-           density="compact"
+          @update:model-value="onUpdateStatus(item)"
         >
           <v-spacer></v-spacer>
           <div>
             <v-radio
-              v-for="r in utilStore.getActiveUnActiveStatus"
+              v-for="r in utilStore.getActiveUnActiveNumberStatus"
               :label="r.TEXT"
-              :value="r.CODE"
+              :value="Number(r.CODE)"
               :class="r.CLASS"
-              density="compact"
             ></v-radio>
           </div>
         </v-radio-group>
@@ -96,35 +79,62 @@
           <v-tooltip text="Unlock">
             <template v-slot:activator="{ props }">
               <v-btn
-                :variant="item.IS_LOCKED == 1 ? 'flat' : 'tonal'"
+                :variant="item.IS_LOCK == 1 ? 'flat' : 'tonal'"
                 size="small"
-                :color="item.IS_LOCKED == 1 ? 'warning' : 'success'"
+                :color="item.IS_LOCK == 1 ? 'warning' : 'success'"
                 class="ma-1"
-                @click="onUnlockPasscode(item)"
+                @click="onUnlockUser(item)"
                 v-bind="props"
               >
                 <Icon
                   name="circum:unlock"
-                  :class="item.IS_LOCKED == 1 ? 'text-white' : 'text-success'"
+                  :class="item.IS_LOCK == 1 ? 'text-white' : 'text-success'"
                 />
               </v-btn>
             </template>
           </v-tooltip>
-          <pages-passcode-reset-modal :item="item" v-if="nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE)"></pages-passcode-reset-modal>
-          <pages-passcode-change-modal
+          <pages-user-reset-password-modal
+            v-if="nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE)"
             :item="item"
-          ></pages-passcode-change-modal>
-          <v-tooltip :text="$t('Delete')">
+            @on-success="onLoadUserLoginList"
+          ></pages-user-reset-password-modal>
+          <pages-user-change-password-modal
+            :item="item"
+            @on-success="onLoadUserLoginList"
+          ></pages-user-change-password-modal>
+
+          <v-tooltip text="Reset ເປັນລະຫັດຜ່ານເລີ່ມຕົ້ນ">
             <template v-slot:activator="{ props }">
               <v-btn
-                variant="tonal"
+                :variant="'tonal'"
                 size="small"
-                color="error"
+                :color="'error'"
                 class="ma-1"
-                @click="onDeletePasscode(item)"
+                @click="onResetPasswordToDefault(item)"
                 v-bind="props"
               >
-                <Icon name="mdi-light:delete" class="text-error" />
+                <Icon
+                  name="fluent:password-reset-48-regular"
+                  :class="'text-error'"
+                />
+              </v-btn>
+            </template>
+          </v-tooltip>
+
+          <v-tooltip text="Reset all device code">
+            <template v-slot:activator="{ props }">
+              <v-btn
+                :variant="'tonal'"
+                size="small"
+                :color="'success'"
+                class="ma-1"
+                @click="onResetDeviceCode(item)"
+                v-bind="props"
+              >
+                <Icon
+                  name="ix:generic-device-refresh"
+                  :class="'text-success'"
+                />
               </v-btn>
             </template>
           </v-tooltip>
@@ -143,10 +153,9 @@ definePageMeta({
 const nuxtApp: any = useNuxtApp();
 const route: any = useRoute();
 
-const passcodeStore = usePasscodeStore();
+const userStore = useUserStore();
 const loginStore = useLoginStore();
 const utilStore = useUtilStore();
-const employeeStore = useEmployeeStore();
 
 //paramitter
 
@@ -154,21 +163,11 @@ const dataList: any = ref([]);
 const txtSearch = ref("");
 const page = ref(1);
 const itemsPerPage = ref(10);
-
 const tableHeaders: any = ref([
-  {
-    title: nuxtApp.$t("type"),
-    key: "PUREPOSE",
-    align: "start",
-  },
   { title: nuxtApp.$t("id"), key: "USER_NAME", align: "start" },
 
   { title: nuxtApp.$t("name"), key: "FULL_NAME_LA", align: "start" },
-  //   {
-  //     title: nuxtApp.$t("position"),
-  //     key: "POS_NAME",
-  //     align: "start",
-  //   },
+
   {
     title: nuxtApp.$t("branch"),
     key: "BR_NAME",
@@ -179,14 +178,14 @@ const tableHeaders: any = ref([
     key: "SEC_NAME",
     align: "start",
   },
-  // {
-  //   title: nuxtApp.$t("team"),
-  //   key: "TEAM_NAME",
-  //   align: "start",
-  // },
+  {
+    title: nuxtApp.$t("team"),
+    key: "TEAM_NAME",
+    align: "start",
+  },
   {
     title: nuxtApp.$t("status"),
-    key: "PASSCODE_STATUS",
+    key: "USER_STATUS",
     align: "center",
   },
   {
@@ -198,59 +197,60 @@ const tableHeaders: any = ref([
 ]);
 
 onMounted(async () => {
-  await onLoadPasscodeList();
-  await passcodeStore.acGetPasscodeType({ status: "A" });
-  await employeeStore.acGetEmployeeList({});
-  
+  await onLoadUserLoginList();
 });
 
-const onLoadPasscodeList = async () => {
+const onLoadUserLoginList = async () => {
   nuxtApp.$openLoading();
-  await passcodeStore.acGetPasscodeList({
+  await userStore.acGetUserLoginList({
     user_name: "",
-    purepose: "",
+    pos_id: "",
+    team_id: "",
+    section_id: "",
+    branch_code: "",
     status: "",
   });
-  dataList.value = passcodeStore.getPasscodeList;
+  dataList.value = userStore.getUserLoginList;
   nuxtApp.$closeLoading();
 };
 
-const onUpdateStatus = async (item: PasscodeInfoModel) => {
+const onUpdateStatus = async (item: UserLoginModel) => {
   nuxtApp.$openLoading();
-  await passcodeStore
-    .acInsertUpdatePasscode({
+  await userStore
+    .acInsertUpdateUserLoginList({
       user_name: item.USER_NAME,
-      purepose: item.PUREPOSE,
-      status: item.PASSCODE_STATUS,
+      attempts: item.MAX_ATTEMPTS,
+      status: item.USER_STATUS,
       action: utilStore.getActnoCode.UPDATE,
     })
     .then(async (result: ResponseModel) => {
       nuxtApp.$closeLoading();
       if (result.ERROR_CODE == "00") {
-        await onLoadPasscodeList();
+        await onLoadUserLoginList();
       } else {
         nuxtApp.$openAlert("E", result.ERROR_CODE + ": " + result.ERROR_DESC);
       }
     });
-
   nuxtApp.$closeLoading();
 };
 
-const onDeletePasscode = async (item: PasscodeInfoModel) => {
+const onUnlockUser = async (item: UserLoginModel) => {
   nuxtApp
-    .$openAlert("Q", nuxtApp.$t("AreYouSureToDelete"))
+    .$openAlert("Q", "ທ່ານຕ້ອງການ Unlock ແທ້ບໍ?")
     .then(async (r: any) => {
       nuxtApp.$openLoading();
-      await passcodeStore
-        .acInsertUpdatePasscode({
+      await userStore
+        .acUnlockUserLogin({
           user_name: item.USER_NAME,
-          purepose: item.PUREPOSE,
-          action: utilStore.getActnoCode.DELETE,
         })
         .then(async (result: ResponseModel) => {
           nuxtApp.$closeLoading();
           if (result.ERROR_CODE == "00") {
-            await onLoadPasscodeList();
+            nuxtApp
+              .$openAlert("S", result.ERROR_CODE + ": " + result.ERROR_DESC)
+              .then(async (r: any) => {
+                await onLoadUserLoginList();
+              });
           } else {
             nuxtApp.$openAlert(
               "E",
@@ -264,15 +264,15 @@ const onDeletePasscode = async (item: PasscodeInfoModel) => {
     .catch((c: any) => {});
 };
 
-const onUnlockPasscode = async (item: PasscodeInfoModel) => {
+const onResetDeviceCode = async (item: UserLoginModel) => {
   nuxtApp
-    .$openAlert("Q", "ທ່ານຕ້ອງການ Unlock ແທ້ບໍ?")
+    .$openAlert("Q", "ທ່ານຕ້ອງການ Reset ແທ້ບໍ?")
     .then(async (r: any) => {
       nuxtApp.$openLoading();
-      await passcodeStore
-        .acUnlockPasscode({
+      await userStore
+        .acResetDeviceCode({
+          project_id: nuxtApp.$env.projectID,
           user_name: item.USER_NAME,
-          purepose: item.PUREPOSE,
         })
         .then(async (result: ResponseModel) => {
           nuxtApp.$closeLoading();
@@ -280,7 +280,39 @@ const onUnlockPasscode = async (item: PasscodeInfoModel) => {
             nuxtApp
               .$openAlert("S", result.ERROR_CODE + ": " + result.ERROR_DESC)
               .then(async (r: any) => {
-                await onLoadPasscodeList();
+                await onLoadUserLoginList();
+              });
+          } else {
+            nuxtApp.$openAlert(
+              "E",
+              result.ERROR_CODE + ": " + result.ERROR_DESC
+            );
+          }
+        });
+
+      nuxtApp.$closeLoading();
+    })
+    .catch((c: any) => {});
+};
+const onResetPasswordToDefault = async (item: UserLoginModel) => {
+  nuxtApp
+    .$openAlert("Q", "ທ່ານຕ້ອງການ Reset ແທ້ບໍ?")
+    .then(async (r: any) => {
+      nuxtApp.$openLoading();
+      await userStore
+        .acResetPasswordUserLogin({
+          project_id: nuxtApp.$env.projectID,
+          user_name: item.USER_NAME,
+          new_password: "123456",
+          confirm_password: "123456",
+        })
+        .then(async (result: ResponseModel) => {
+          nuxtApp.$closeLoading();
+          if (result.ERROR_CODE == "00") {
+            nuxtApp
+              .$openAlert("S", result.ERROR_CODE + ": " + result.ERROR_DESC)
+              .then(async (r: any) => {
+                await onLoadUserLoginList();
               });
           } else {
             nuxtApp.$openAlert(

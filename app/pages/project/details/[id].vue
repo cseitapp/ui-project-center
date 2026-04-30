@@ -8,33 +8,40 @@
         </div>
       </v-btn>
       <v-spacer></v-spacer>
-      <v-btn
-        variant="tonal"
-        color="secondary"
-        class="ma-1"
-        @click="goToProjectUser(itemSelected?.PRO_ID)"
+      <template
+        v-if="
+          itemSelected?.PRO_ID == nuxtApp.$env.projectID &&
+          nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE)
+        "
       >
-        <Icon name="si:user-line" class="text-warning mr-1" />
-        ຕັ້ງຄ່າຜູ້ໃຊ້
-      </v-btn>
-      <v-btn
-        variant="tonal"
-        color="secondary"
-        class="ma-1"
-        @click="goToProjectRole(itemSelected?.PRO_ID)"
-      >
-        <Icon name="lets-icons:setting-line" class="text-success mr-1" />
-        ສິດເຂົ້າໃຊ້ລະບົບ
-      </v-btn>
-      <v-btn
-        variant="tonal"
-        color="secondary"
-        class="ma-1"
-        @click="goToProjectMenu(itemSelected?.PRO_ID)"
-      >
-        <Icon name="ep:menu" class="text-info mr-1" />
-        ຕັ້ງຄ່າເມນູ
-      </v-btn>
+        <v-btn
+          variant="tonal"
+          color="secondary"
+          class="ma-1"
+          @click="goToProjectUser(itemSelected?.PRO_ID)"
+        >
+          <Icon name="si:user-line" class="text-warning mr-1" />
+          ຕັ້ງຄ່າຜູ້ໃຊ້
+        </v-btn>
+        <v-btn
+          variant="tonal"
+          color="secondary"
+          class="ma-1"
+          @click="goToProjectRole(itemSelected?.PRO_ID)"
+        >
+          <Icon name="lets-icons:setting-line" class="text-success mr-1" />
+          ສິດເຂົ້າໃຊ້ລະບົບ
+        </v-btn>
+        <v-btn
+          variant="tonal"
+          color="secondary"
+          class="ma-1"
+          @click="goToProjectMenu(itemSelected?.PRO_ID)"
+        >
+          <Icon name="ep:menu" class="text-info mr-1" />
+          ຕັ້ງຄ່າເມນູ
+        </v-btn>
+      </template>
     </v-row>
     <div class="py-2">
       <v-row>

@@ -112,3 +112,33 @@ export interface EmployeeRoleModel {
   BR_CODE:       string;
   BR_NAME_EN:    string;
 }
+
+
+export interface UserLoginModel {
+  ID: number
+  USER_NAME: string
+  MAX_ATTEMPTS: number
+  ATTEMPTS_USED: number
+  IS_LOCK: number
+  LOCKED_COUNT: number
+  RESETED_COUNT: number
+  LOGIN_COUNT: number
+  USER_STATUS: number
+  CREATED_BY: string
+  CREATED_AT: string
+  MODIFIED_BY: any
+  MODIFIED_AT: any
+  EMP_ID: number
+  FULL_NAME_LA: string
+  FULL_NAME_EN: string
+  PICTURE: string
+  POS_NAME: string
+  POS_NAME_EN: string
+  POS_DESC: string
+  TEAM_NAME: string
+  SEC_NAME: string
+  SEC_NAME_EN: string
+  BR_NAME: string
+  BR_CODE: string
+  BR_NAME_EN: string
+}

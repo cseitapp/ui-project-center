@@ -27,6 +27,10 @@ export const useUtilStore = defineStore("util", {
       { CODE: "A", TEXT: nuxtApp.$t("Active"), CLASS: "text-success" },
       { CODE: "U", TEXT: nuxtApp.$t("Unactive"), CLASS: "text-error" },
     ],
+    getActiveUnActiveNumberStatus: (): CodeAndTextModel[] => [
+      { CODE: "1", TEXT: nuxtApp.$t("Active"), CLASS: "text-success" },
+      { CODE: "0", TEXT: nuxtApp.$t("Unactive"), CLASS: "text-error" },
+    ],
   },
   actions: {
     acOpenSearchDrawer(value: boolean) {
