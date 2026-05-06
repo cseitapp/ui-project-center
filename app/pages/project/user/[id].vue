@@ -108,10 +108,7 @@
             <Icon name="mdi-light:delete" class="text-error" />
           </v-btn>
 
-          <v-tooltip
-            text="Reset device code"
-            v-if="nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE)"
-          >
+          <v-tooltip text="Reset device code">
             <template v-slot:activator="{ props }">
               <v-btn
                 :variant="'tonal'"

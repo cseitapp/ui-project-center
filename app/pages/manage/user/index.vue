@@ -127,7 +127,7 @@
                 </tr>
                 <tr>
                   <td class="text-right px-2">
-                    <span class="text-secondary mr-1">Attempts count: </span>
+                    <span class="text-secondary mr-1">ຈຳນວນ Attempts: </span>
                   </td>
                   <td class="px-2">{{ item.ATTEMPTS_USED }} ຄັ້ງ</td>
                 </tr>
