@@ -53,7 +53,7 @@
       </template>
       <template v-slot:default="{ items }: any">
         <v-row>
-          <v-col cols="12" sm="6" lg="4" v-for="(item, i) in items" :key="i">
+          <v-col cols="12" sm="6" md="4" lg="3" v-for="(item, i) in items" :key="i">
             <v-card v-bind="item" rounded="lg" elevation="0">
               <v-card-title> </v-card-title>
 

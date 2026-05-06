@@ -107,6 +107,27 @@
           >
             <Icon name="mdi-light:delete" class="text-error" />
           </v-btn>
+
+          <v-tooltip
+            text="Reset device code"
+            v-if="nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE)"
+          >
+            <template v-slot:activator="{ props }">
+              <v-btn
+                :variant="'tonal'"
+                size="small"
+                :color="item.DEVICE_CODE ? 'warning' : 'success'"
+                class="ma-1"
+                @click="onResetDeviceCode(item)"
+                v-bind="props"
+              >
+                <Icon
+                  name="ix:generic-device-refresh"
+                  :class="item.DEVICE_CODE ? 'text-warning' : 'text-success'"
+                />
+              </v-btn>
+            </template>
+          </v-tooltip>
         </template>
       </v-data-table>
     </div>
@@ -442,6 +463,7 @@ const utilStore = useUtilStore();
 const roleStore = useRoleStore();
 const employeeStore = useEmployeeStore();
 const orgStore = useOrgStore();
+const userStore = useUserStore();
 
 const dataList: any = ref([]);
 const txtSearch = ref("");
@@ -691,6 +713,37 @@ const onDeleteItem = async (item: UserRoleModel) => {
             );
           }
         });
+    })
+    .catch((c: any) => {});
+};
+
+const onResetDeviceCode = async (item: UserRoleModel) => {
+  nuxtApp
+    .$openAlert("Q", "ທ່ານຕ້ອງການ Reset ແທ້ບໍ?")
+    .then(async (r: any) => {
+      nuxtApp.$openLoading();
+      await userStore
+        .acResetDeviceCode({
+          project_id: item.PRO_ID,
+          user_name: item.USER_NAME,
+        })
+        .then(async (result: ResponseModel) => {
+          nuxtApp.$closeLoading();
+          if (result.ERROR_CODE == "00") {
+            nuxtApp
+              .$openAlert("S", result.ERROR_CODE + ": " + result.ERROR_DESC)
+              .then(async (r: any) => {
+                await onLoadUserRole();
+              });
+          } else {
+            nuxtApp.$openAlert(
+              "E",
+              result.ERROR_CODE + ": " + result.ERROR_DESC
+            );
+          }
+        });
+
+      nuxtApp.$closeLoading();
     })
     .catch((c: any) => {});
 };

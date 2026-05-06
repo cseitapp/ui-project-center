@@ -55,27 +55,86 @@
       </template>
 
       <template v-slot:item.USER_STATUS="{ item }: any">
-        <v-radio-group
-          inline
-          v-model="item.USER_STATUS"
-          hide-details
-          justify="end"
-          @update:model-value="onUpdateStatus(item)"
-        >
-          <v-spacer></v-spacer>
-          <div>
-            <v-radio
-              v-for="r in utilStore.getActiveUnActiveNumberStatus"
-              :label="r.TEXT"
-              :value="Number(r.CODE)"
-              :class="r.CLASS"
-            ></v-radio>
-          </div>
-        </v-radio-group>
+        <v-menu open-on-hover>
+          <template v-slot:activator="{ props }">
+            <code-to-text
+              v-bind="props"
+              :data="
+                utilStore.acGetCodetoText(
+                  utilStore.getActiveUnActiveNumberStatus,
+                  item.USER_STATUS
+                )
+              "
+            ></code-to-text>
+          </template>
+          <v-card rounded="lg">
+            <v-card-text>
+              <v-radio-group
+                inline
+                v-model="item.USER_STATUS"
+                hide-details
+                justify="end"
+                @update:model-value="onUpdateStatus(item)"
+              >
+                <v-spacer></v-spacer>
+                <div>
+                  <v-radio
+                    v-for="r in utilStore.getActiveUnActiveNumberStatus"
+                    :label="r.TEXT"
+                    :value="Number(r.CODE)"
+                    :class="r.CLASS"
+                  ></v-radio>
+                </div>
+              </v-radio-group>
+            </v-card-text>
+          </v-card>
+        </v-menu>
       </template>
 
       <template v-slot:item.ACTION="{ item }: any">
         <v-row class="ma-0" justify="end">
+          <v-menu open-on-hover>
+            <template v-slot:activator="{ props }">
+              <v-btn
+                :variant="'tonal'"
+                size="small"
+                :color="'secondary'"
+                class="ma-1"
+                v-bind="props"
+              >
+                <Icon name="pepicons-pop:dots-y" :class="'text-secondary'" />
+              </v-btn>
+            </template>
+            <v-card rounded="lg">
+              <v-table density="compact">
+                <tr >
+                  <td class="text-right px-2">
+                    <span class="text-secondary mr-1">ຈຳນວນ Locked: </span>
+                  </td>
+                  <td class="px-2">{{ item.LOCKED_COUNT }} ຄັ້ງ</td>
+                </tr>
+                <tr>
+                  <td class="text-right px-2">
+                    <span class="text-secondary mr-1">ຈຳນວນ Reset: </span>
+                  </td>
+                  <td class="px-2">{{ item.RESETED_COUNT }} ຄັ້ງ</td>
+                </tr>
+                <tr>
+                  <td class="text-right px-2">
+                    <span class="text-secondary mr-1">Max attempts: </span>
+                  </td>
+                  <td class="px-2">{{ item.MAX_ATTEMPTS }} ຄັ້ງ</td>
+                </tr>
+                <tr>
+                  <td class="text-right px-2">
+                    <span class="text-secondary mr-1">Attempts count: </span>
+                  </td>
+                  <td class="px-2">{{ item.ATTEMPTS_USED }} ຄັ້ງ</td>
+                </tr>
+              </v-table>
+            </v-card>
+          </v-menu>
+
           <v-tooltip text="Unlock">
             <template v-slot:activator="{ props }">
               <v-btn
@@ -121,7 +180,10 @@
             </template>
           </v-tooltip>
 
-          <v-tooltip text="Reset all device code">
+          <v-tooltip
+            text="Reset all device code"
+            v-if="nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE)"
+          >
             <template v-slot:activator="{ props }">
               <v-btn
                 :variant="'tonal'"

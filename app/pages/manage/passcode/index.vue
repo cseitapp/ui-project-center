@@ -70,6 +70,21 @@
       </template>
 
       <template v-slot:item.PASSCODE_STATUS="{ item }: any">
+        <v-menu open-on-hover>
+          <template v-slot:activator="{ props }">
+            <code-to-text
+              v-bind="props"
+              :data="
+                utilStore.acGetCodetoText(
+                  utilStore.getActiveUnActiveStatus,
+                  item.PASSCODE_STATUS
+                )
+              "
+            ></code-to-text>
+          </template>
+          <v-card rounded="lg">
+            <v-card-text>
+             
         <v-radio-group
           inline
           v-model="item.PASSCODE_STATUS"
@@ -89,6 +104,9 @@
             ></v-radio>
           </div>
         </v-radio-group>
+            </v-card-text>
+          </v-card>
+        </v-menu>
       </template>
 
       <template v-slot:item.ACTION="{ item }: any">

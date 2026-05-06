@@ -1,5 +1,9 @@
 export interface UserRoleModel {
   ID: number;
+  DEVICE_CODE: any;
+  OS_SYSTEM: any;
+  LAST_LOGIN: any;
+  VERSION: any;
   USER_NAME: string;
   ROLE_ID: string;
   ROLE_NAME_LA: string;

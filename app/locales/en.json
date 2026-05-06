@@ -67,7 +67,7 @@
   "team": "Sector",
   "position": "Position",
   "positionLevel": "Position level",
-  "level":"Level",
+  "level": "Level",
   "nameAndLastName": "Name and Surename",
   "type": "Type",
   "amount": "amount",
@@ -156,7 +156,9 @@
   "evaluateSuccess": "Evaluate success",
   "waitingEvaluate": "Waiting evaluate",
   "score": "Score",
-  "viewDetail":"View detail",
-    "member":"Member",
-    "role":"Role"
+  "viewDetail": "View detail",
+  "member": "Member",
+  "role": "Role",
+  "testing": "Testing",
+  "order":"Order"
 }

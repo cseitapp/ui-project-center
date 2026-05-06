@@ -13,11 +13,7 @@ export default defineNuxtConfig({
       charset: "utf-8",
       viewport: "width=device-width, initial-scale=1",
       title: "CSE Project center",
-      script: [
-        {
-          // src: "",
-        },
-      ],
+      script: [{ src: "/js/particles.min.js" }],
 
       link: [{ rel: "icon", type: "image/x-icon", href: "/cse.ico" }],
     },

@@ -10,7 +10,7 @@
       <v-spacer></v-spacer>
       <template
         v-if="
-          itemSelected?.PRO_ID == nuxtApp.$env.projectID &&
+          itemSelected?.PRO_ID != nuxtApp.$env.projectID ||
           nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE)
         "
       >
