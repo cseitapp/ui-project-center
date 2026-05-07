@@ -49,7 +49,7 @@
                       ></code-to-text>
                     </div>
                     <v-spacer></v-spacer>
-                    <v-menu>
+                    <v-menu :close-on-content-click="false">
                       <template v-slot:activator="{ props }">
                         <Icon
                           name="pepicons-pop:dots-y"
@@ -183,7 +183,14 @@
                                 <p class="text-secondary">
                                   {{ "ອີເມວ: " + item.EMAIL }}
                                 </p>
-                                <p class="text-secondary">
+                                <p
+                                  class="text-secondary m-cursor"
+                                  @click="
+                                    item.MOBILE
+                                      ? openWhatsApp(item.MOBILE)
+                                      : null
+                                  "
+                                >
                                   {{ "ເບີໂທ: " + item.MOBILE }}
                                 </p>
                                 <code-to-text
@@ -264,4 +271,11 @@ const onLoadProjectManager = async () => {
   });
   nuxtApp.$closeLoading();
 };
+
+function openWhatsApp(number: string) {
+  var num = Number(number);
+  var text = "ສະບາຍດີ";
+  // encodeURIComponent(text)
+  window.location.href = `whatsapp://send?phone=${num}&text=${text}`;
+}
 </script>
