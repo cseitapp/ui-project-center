@@ -140,6 +140,9 @@ onMounted(async () => {
 });
 
 const onInitData = async () => {
+  userSelected.value = null;
+  rbManagerType.value = "D";
+  action.value = utilStore.getActnoCode.INSERT;
   if (props.item) {
     var a = employeeStore.getEmployeeList.filter(
       (el) => el.USER_NAME.toUpperCase() == props.item?.USER_NAME.toUpperCase()

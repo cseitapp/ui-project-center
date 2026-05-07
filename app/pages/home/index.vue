@@ -60,6 +60,7 @@
 
                       <v-card rounded="lg">
                         <v-card-text>
+                          <h3>ຂໍ້ມູນລະບົບ</h3>
                           <v-table>
                             <tr>
                               <td class="text-right pr-2">
@@ -147,6 +148,55 @@
                               </td>
                             </tr>
                           </v-table>
+                          <h3 class="mt-4">ຜູ້ຄຸ້ມຄອງລະບົບ</h3>
+                          <div
+                            v-if="
+                              projectStore.getProjecManager.filter(
+                                (el) => el.PRO_ID == pro.PRO_ID
+                              ).length <= 0
+                            "
+                            class="text-center"
+                          >
+                            <no-data></no-data>
+                          </div>
+                          <div
+                            v-else
+                            class="border-sm rounded-lg px-2 my-2"
+                            v-for="item in projectStore.getProjecManager.filter(
+                              (el) => el.PRO_ID == pro.PRO_ID
+                            )"
+                          >
+                            <v-row class="ma-0">
+                              <util-image-profile
+                                :picture="item.PICTURE ?? ''"
+                                :size="60"
+                              >
+                              </util-image-profile>
+                              <v-col>
+                                <p>{{ item.FULL_NAME_LA }}</p>
+                                <p class="text-secondary">
+                                  {{ item.FULL_NAME_EN }}
+                                </p>
+                                <p class="text-secondary">
+                                  {{ "ຕຳແໜ່ງ: " + item.POS_DESC }}
+                                </p>
+                                <p class="text-secondary">
+                                  {{ "ອີເມວ: " + item.EMAIL }}
+                                </p>
+                                <p class="text-secondary">
+                                  {{ "ເບີໂທ: " + item.MOBILE }}
+                                </p>
+                                <code-to-text
+                                  :data="
+                                    utilStore.acGetCodetoText(
+                                      projectStore.getProjectManagerType,
+                                      item.MN_TYPE
+                                    )
+                                  "
+                                ></code-to-text>
+                              </v-col>
+                            </v-row>
+                          </div>
                         </v-card-text>
                       </v-card>
                     </v-menu>
@@ -190,6 +240,7 @@ onMounted(async () => {
     status: "A",
   });
   await onLoadProjectList();
+  await onLoadProjectManager();
 });
 
 const onLoadProjectList = async () => {
@@ -203,5 +254,14 @@ const goToProject = async (url: string) => {
   if (url) {
     window.open(url, "_blank");
   }
+};
+
+const onLoadProjectManager = async () => {
+  nuxtApp.$openLoading();
+  await projectStore.acGetProjectManger({
+    status: "A",
+    project_id: "",
+  });
+  nuxtApp.$closeLoading();
 };
 </script>

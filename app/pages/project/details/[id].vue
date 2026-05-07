@@ -249,7 +249,12 @@
                         "
                       ></code-to-text>
                     </v-col>
-                    <div>
+                    <div
+                      v-if="
+                        nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE) ||
+                        nuxtApp.$isIT(loginStore.loginUser?.ROLE_CODE)
+                      "
+                    >
                       <div>
                         <pages-project-add-manager
                           :project-id="item.PRO_ID"
@@ -289,7 +294,13 @@
               <div v-else class="text-center">
                 <no-data></no-data>
               </div>
-              <div class="mt-4">
+              <div
+                class="mt-4"
+                v-if="
+                  nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE) ||
+                  nuxtApp.$isIT(loginStore.loginUser?.ROLE_CODE)
+                "
+              >
                 <pages-project-add-manager
                   :project-id="itemSelected?.PRO_ID"
                   @on-success="onLoadProjectManager"
