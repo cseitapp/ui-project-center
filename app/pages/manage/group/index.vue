@@ -4,7 +4,7 @@
       :search="txtSearch"
       :headers="tableHeaders"
       :items="dataList"
-      class="rounded-lg custom-table-header m-shadow"
+      class="rounded-lg custom-table-header m-shadow elevation-0"
       density="comfortable"
       v-model:page="page"
       :items-per-page="itemsPerPage"

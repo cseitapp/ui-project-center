@@ -468,6 +468,7 @@ const page = ref(1);
 const itemsPerPage = ref(10);
 const tableHeaders: any = ref([
   { title: nuxtApp.$t("id"), key: "USER_NAME", align: "start" },
+  { title: "ເຂົ້າລະບົບລ່າສຸດ", key: "LAST_LOGIN", align: "start" },
 
   {
     title: nuxtApp.$t("role"),
@@ -490,11 +491,11 @@ const tableHeaders: any = ref([
     key: "SEC_NAME",
     align: "start",
   },
-  {
-    title: nuxtApp.$t("team"),
-    key: "TEAM_NAME",
-    align: "start",
-  },
+  // {
+  //   title: nuxtApp.$t("team"),
+  //   key: "TEAM_NAME",
+  //   align: "start",
+  // },
   {
     title: "",
     sortable: false,

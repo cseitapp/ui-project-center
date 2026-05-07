@@ -214,7 +214,88 @@
               <h5>ຂໍ້ມູນຜູ້ຄຸ້ມຄອງ</h5>
             </v-card-title>
             <v-divider></v-divider>
-            <v-card-text class="text-center"> <no-data></no-data> </v-card-text>
+            <v-card-text>
+              <template v-if="projectStore.getProjecManager.length > 0">
+                <div
+                  class="border-sm rounded-lg px-2 my-2"
+                  v-for="item in projectStore.getProjecManager"
+                >
+                  <v-row class="ma-0">
+                    <util-image-profile
+                      :picture="item.PICTURE ?? ''"
+                      :size="60"
+                    >
+                    </util-image-profile>
+                    <v-col>
+                      <p>{{ item.FULL_NAME_LA }}</p>
+                      <p class="text-secondary">
+                        {{ item.FULL_NAME_EN }}
+                      </p>
+                      <p class="text-secondary">
+                        {{ "ຕຳແໜ່ງ: " + item.POS_DESC }}
+                      </p>
+                      <p class="text-secondary">
+                        {{ "ອີເມວ: " + item.EMAIL }}
+                      </p>
+                      <p class="text-secondary">
+                        {{ "ເບີໂທ: " + item.MOBILE }}
+                      </p>
+                      <code-to-text
+                        :data="
+                          utilStore.acGetCodetoText(
+                            projectStore.getProjectManagerType,
+                            item.MN_TYPE
+                          )
+                        "
+                      ></code-to-text>
+                    </v-col>
+                    <div>
+                      <div>
+                        <pages-project-add-manager
+                          :project-id="item.PRO_ID"
+                          :item="item"
+                          @on-success="onLoadProjectManager"
+                        >
+                          <template #content>
+                            <v-btn
+                              variant="text"
+                              size="small"
+                              color="secondary"
+                              icon
+                            >
+                              <Icon
+                                name="fa7-regular:edit"
+                                class="text-warning"
+                              />
+                            </v-btn>
+                          </template>
+                        </pages-project-add-manager>
+                      </div>
+                      <div>
+                        <v-btn
+                          variant="text"
+                          size="small"
+                          color="secondary"
+                          icon
+                          @click="onDeleteProjectManager(item)"
+                        >
+                          <Icon name="mdi-light:delete" class="text-error" />
+                        </v-btn>
+                      </div>
+                    </div>
+                  </v-row>
+                </div>
+              </template>
+              <div v-else class="text-center">
+                <no-data></no-data>
+              </div>
+              <div class="mt-4">
+                <pages-project-add-manager
+                  :project-id="itemSelected?.PRO_ID"
+                  @on-success="onLoadProjectManager"
+                ></pages-project-add-manager>
+              </div>
+            </v-card-text>
           </v-card>
         </v-col>
         <v-col cols="12" md="4">
@@ -257,6 +338,8 @@ const uploadFilePath = ref("");
 
 onMounted(async () => {
   await onInitLoading();
+
+  await onLoadProjectManager();
   await onLoadGuidelineFileList();
   await onLoadSystemDocFileList();
 });
@@ -330,5 +413,45 @@ const onLoadSystemDocFileList = async () => {
   var a = await fileStore.acGetFileList({ path: path });
   systemDocumnetList.value = a;
   nuxtApp.$closeLoading();
+};
+
+const onLoadProjectManager = async () => {
+  nuxtApp.$openLoading();
+  await projectStore.acGetProjectManger({
+    status: "",
+    project_id: itemSelected.value?.PRO_ID,
+  });
+  nuxtApp.$closeLoading();
+};
+
+const onDeleteProjectManager = async (item: ProjectManagerModel) => {
+  nuxtApp
+    .$openAlert("Q", nuxtApp.$t("AreYouSureToDelete"))
+    .then(async (r: any) => {
+      nuxtApp.$openLoading();
+      await projectStore
+        .acInsertProjectManager({
+          id: item.ID,
+          action: utilStore.getActnoCode.DELETE,
+        })
+        .then(async (result: ResponseModel) => {
+          nuxtApp.$closeLoading();
+          if (result.ERROR_CODE == "00") {
+            await onLoadProjectManager();
+            nuxtApp.$openAlert(
+              "S",
+              result.ERROR_CODE + ": " + result.ERROR_DESC
+            );
+          } else {
+            nuxtApp.$openAlert(
+              "E",
+              result.ERROR_CODE + ": " + result.ERROR_DESC
+            );
+          }
+        });
+
+      nuxtApp.$closeLoading();
+    })
+    .catch((c: any) => {});
 };
 </script>

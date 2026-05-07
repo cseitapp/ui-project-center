@@ -5,6 +5,7 @@ export interface PasscodeInfoModel {
     MAX_ATTEMPTS: number
     ATTEMPTS_USED: number
     IS_LOCKED: number
+    LOCKED_AT:any
     IS_USED: number
     CREATED_BY: string
     CREATED_AT: string

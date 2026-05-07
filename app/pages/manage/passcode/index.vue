@@ -4,7 +4,7 @@
       :search="txtSearch"
       :headers="tableHeaders"
       :items="dataList"
-      class="rounded-lg custom-table-header m-shadow"
+      class="rounded-lg custom-table-header m-shadow elevation-0"
       density="comfortable"
       v-model:page="page"
       :items-per-page="itemsPerPage"
@@ -202,6 +202,11 @@ const tableHeaders: any = ref([
   //   key: "TEAM_NAME",
   //   align: "start",
   // },
+  {
+    title: "ເວລາລ໋ອກລ່າສຸດ",
+    key: "LOCKED_AT",
+    align: "start",
+  },
   {
     title: nuxtApp.$t("status"),
     key: "PASSCODE_STATUS",

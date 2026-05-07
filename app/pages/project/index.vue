@@ -53,7 +53,14 @@
       </template>
       <template v-slot:default="{ items }: any">
         <v-row>
-          <v-col cols="12" sm="6" md="4" lg="3" v-for="(item, i) in items" :key="i">
+          <v-col
+            cols="12"
+            sm="6"
+            md="4"
+            lg="3"
+            v-for="(item, i) in items"
+            :key="i"
+          >
             <v-card v-bind="item" rounded="lg" elevation="0">
               <v-card-title> </v-card-title>
 
@@ -119,7 +126,8 @@
                       <td class="text-right">
                         <code-to-text
                           :data="
-                            utilStore.acGetCodetoText(projectStore.getProjectStatus,
+                            utilStore.acGetCodetoText(
+                              projectStore.getProjectStatus,
                               item.raw.PRO_STATUS
                             )
                           "
@@ -307,7 +315,7 @@ const utilStore = useUtilStore();
 const dataList: any = ref([]);
 const txtSearch = ref("");
 const page = ref(1);
-const itemsPerPage = ref(9);
+const itemsPerPage = ref(12);
 
 const tableHeaders: any = ref([
   { title: nuxtApp.$t("id"), key: "PRO_ID", align: "start" },

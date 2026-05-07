@@ -4,7 +4,7 @@
       :search="txtSearch"
       :headers="tableHeaders"
       :items="dataList"
-      class="rounded-lg custom-table-header m-shadow"
+      class="rounded-lg custom-table-header m-shadow elevation-0"
       density="comfortable"
       v-model:page="page"
       :items-per-page="itemsPerPage"
@@ -107,7 +107,7 @@
             </template>
             <v-card rounded="lg">
               <v-table density="compact">
-                <tr >
+                <tr>
                   <td class="text-right px-2">
                     <span class="text-secondary mr-1">ຈຳນວນ Locked: </span>
                   </td>
@@ -118,6 +118,12 @@
                     <span class="text-secondary mr-1">ຈຳນວນ Reset: </span>
                   </td>
                   <td class="px-2">{{ item.RESETED_COUNT }} ຄັ້ງ</td>
+                </tr>
+                <tr>
+                  <td class="text-right px-2">
+                    <span class="text-secondary mr-1">ເວລາລ໋ອກລ່າສຸດ: </span>
+                  </td>
+                  <td class="px-2">{{ item.LOCK_AT ?? "-" }}</td>
                 </tr>
                 <tr>
                   <td class="text-right px-2">
