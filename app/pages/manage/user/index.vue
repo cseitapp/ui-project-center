@@ -93,7 +93,7 @@
 
       <template v-slot:item.ACTION="{ item }: any">
         <v-row class="ma-0" justify="end">
-          <v-menu open-on-hover>
+          <v-menu open-on-hover :close-on-content-click="false">
             <template v-slot:activator="{ props }">
               <v-btn
                 :variant="'tonal'"
@@ -339,8 +339,9 @@ const onResetDeviceCode = async (item: UserLoginModel) => {
       nuxtApp.$openLoading();
       await userStore
         .acResetDeviceCode({
-          project_id: nuxtApp.$env.projectID,
+          project_id: "",
           user_name: item.USER_NAME,
+          user: loginStore.loginUser?.USER_NAME,
         })
         .then(async (result: ResponseModel) => {
           nuxtApp.$closeLoading();

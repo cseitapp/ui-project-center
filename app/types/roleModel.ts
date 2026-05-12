@@ -4,6 +4,9 @@ export interface UserRoleModel {
   OS_SYSTEM: any;
   LAST_LOGIN: any;
   VERSION: any;
+  LAST_RESET_CODE: any;
+  USER_RESET: any;
+  RESETED_COUNT: number;
   USER_NAME: string;
   ROLE_ID: string;
   ROLE_NAME_LA: string;

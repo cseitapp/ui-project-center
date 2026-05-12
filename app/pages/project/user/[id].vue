@@ -89,6 +89,45 @@
         </template>
 
         <template v-slot:item.ACTION="{ item }: any">
+          <v-menu
+            open-on-hover
+            :close-on-content-click="false"
+            v-if="nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE)"
+          >
+            <template v-slot:activator="{ props }">
+              <v-btn
+                :variant="'tonal'"
+                size="small"
+                :color="'secondary'"
+                class="ma-1"
+                v-bind="props"
+              >
+                <Icon name="pepicons-pop:dots-y" :class="'text-secondary'" />
+              </v-btn>
+            </template>
+            <v-card rounded="lg">
+              <v-table density="compact">
+                <tr>
+                  <td class="text-right px-2">
+                    <span class="text-secondary mr-1">ເວລາ Reset ລ່າສຸດ: </span>
+                  </td>
+                  <td class="px-2">{{ item.LAST_RESET_CODE }}</td>
+                </tr>
+                <tr>
+                  <td class="text-right px-2">
+                    <span class="text-secondary mr-1">ຜູ້ Reset ລ່າສຸດ: </span>
+                  </td>
+                  <td class="px-2">{{ item.USER_RESET }}</td>
+                </tr>
+                <tr>
+                  <td class="text-right px-2">
+                    <span class="text-secondary mr-1">ຈຳນວນ Reset: </span>
+                  </td>
+                  <td class="px-2">{{ item.RESETED_COUNT }} ຄັ້ງ</td>
+                </tr>
+              </v-table>
+            </v-card>
+          </v-menu>
           <v-btn
             variant="tonal"
             size="small"
@@ -117,6 +156,7 @@
                 class="ma-1"
                 @click="onResetDeviceCode(item)"
                 v-bind="props"
+                :disabled="!item.DEVICE_CODE"
               >
                 <Icon
                   name="ix:generic-device-refresh"
@@ -724,6 +764,7 @@ const onResetDeviceCode = async (item: UserRoleModel) => {
         .acResetDeviceCode({
           project_id: item.PRO_ID,
           user_name: item.USER_NAME,
+          user: loginStore.loginUser?.USER_NAME,
         })
         .then(async (result: ResponseModel) => {
           nuxtApp.$closeLoading();
