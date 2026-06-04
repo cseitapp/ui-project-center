@@ -14,7 +14,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         statusMessage: err.statusText,
       });
     });
+
   if (isAuthenticated.value === false) {
-    return navigateTo("/");
+    return clearError({ redirect: "/" });
+    // return navigateTo("/");
   }
 });
