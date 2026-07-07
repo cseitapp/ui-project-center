@@ -38,7 +38,7 @@ export const useProjectStore = defineStore("project", {
         ICON: "typcn:code-outline",
       },
       {
-        CODE: "D",
+        CODE: "T",
         TEXT: nuxtApp.$t("testing"),
         CLASS: "text-info",
         ICON: "streamline-ultimate:ab-testing-monitors",

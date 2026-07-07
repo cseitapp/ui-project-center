@@ -1,8 +1,8 @@
 <template>
   <v-container>
-    <div class="text-center mb-2">
-      <img src="~/assets/img/logo/logo_cse.png" height="80" />
-      <h2 class="text-secondary">ຍິນດີຕ້ອນຮັບເຂົ້າສູ່ລະບົບ CSE Community</h2>
+    <div class="text-center">
+      <!-- <img src="~/assets/img/logo/logo_cse.png" height="80" /> -->
+      <h1 class="text-primary">ຍິນດີຕ້ອນຮັບເຂົ້າສູ່ລະບົບ CSE Community</h1>
     </div>
     <div v-if="projectStore.getProjecGroup.length > 0">
       <div v-for="group in projectStore.getProjecGroup">
