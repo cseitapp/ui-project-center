@@ -1010,12 +1010,20 @@ const onInserMenuRoleItem = async () => {
 };
 
 const onDeleteMenuRoleItem = async (item: MenuModel) => {
+  const menuList = menuStore.roleMenuList
+    .filter(
+      (el) =>
+        el.ROLE_ID == item.ROLE_ID &&
+        (el.MENU_ID == item.MENU_ID || el.SUB_MENU_ID == item.MENU_ID)
+    )
+    .map(({ MENU_ID }) => MENU_ID);
+
   nuxtApp
     .$openAlert("Q", nuxtApp.$t("AreYouSureToDelete"))
     .then(async (r: any) => {
       var body = {
         role_id: item.ROLE_ID,
-        menu_id: item.MENU_ID,
+        menu_id: menuList.toString(),
         action: utilStore.getActnoCode.DELETE,
       };
       nuxtApp.$openLoading();
