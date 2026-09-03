@@ -116,6 +116,7 @@ const props = defineProps({
 });
 
 const userStore = useUserStore();
+const loginStore = useLoginStore();
 const nuxtApp: any = useNuxtApp();
 //paramitter
 const myForm = ref();
@@ -145,6 +146,7 @@ const onChangePasscode = async (isActive: any) => {
           user_name: props.item?.USER_NAME,
           new_password: txtNewPasscode.value,
           confirm_password: txtConfirmPasscode.value,
+          action_by: loginStore.loginUser?.USER_NAME,
         };
         nuxtApp.$openLoading();
         await userStore

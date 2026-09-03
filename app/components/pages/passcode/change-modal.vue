@@ -19,7 +19,6 @@
     </template>
 
     <template v-slot:default="{ isActive }">
-       
       <v-row justify="center">
         <v-col cols="12" sm="8" md="6" lg="3">
           <v-card rounded="lg">
@@ -84,7 +83,7 @@
                 class="w-100"
                 @click="
                   () => {
-                    onChangePasscode();
+                    onChangePasscode(isActive);
                   }
                 "
                 >ປ່ຽນ Passcode</v-btn
@@ -103,6 +102,7 @@ const props = defineProps({
   item: Object as PropType<PasscodeInfoModel>,
 });
 const passcodeStore = usePasscodeStore();
+const loginStore = useLoginStore();
 const nuxtApp = useNuxtApp();
 //paramitter
 const myForm = ref();
@@ -111,7 +111,8 @@ const txtNewPasscode = ref();
 const txtConfirmPasscode = ref();
 const showPw = ref(false);
 
-const onChangePasscode = async () => {
+
+const onChangePasscode = async (isActive:any) => {
   if (
     !txtOldPasscode.value ||
     !txtNewPasscode.value ||
@@ -136,6 +137,7 @@ const onChangePasscode = async () => {
         old_passcode: txtOldPasscode.value,
         new_passcode: txtNewPasscode.value,
         confirm_passcode: txtConfirmPasscode.value,
+        action_by: loginStore.loginUser?.USER_NAME,
       };
       nuxtApp.$openLoading();
       await passcodeStore
@@ -149,7 +151,9 @@ const onChangePasscode = async () => {
             nuxtApp.$openAlert(
               "S",
               result.ERROR_CODE + ": " + result.ERROR_DESC
-            );
+            ).then(r=>{
+              isActive.value=false
+            })
           } else {
             nuxtApp.$openAlert(
               "E",

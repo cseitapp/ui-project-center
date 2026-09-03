@@ -10,6 +10,10 @@ export const useLoginStore = defineStore("login", {
   state: (): State => ({ user: null }),
   getters: {
     loginUser: (state) => state.user,
+    isAdmin: (state): boolean => state.user?.ROLE_CODE == "ADMIN",
+    isDev: (state): boolean => state.user?.ROLE_CODE == "DEV",
+    isITAdmin: (state): boolean => state.user?.ROLE_CODE == "IT-ADMIN",
+    isGeneral: (state): boolean => state.user?.ROLE_CODE == "GENERAL",
   },
   actions: {
     loginSystem(body: object) {
@@ -75,12 +79,10 @@ export const useLoginStore = defineStore("login", {
     },
 
     async logOutSystem() {
-      
       await $fetch(nuxtApp.$env.serverProjectCenter + "/logout", {
         method: "POST",
         body: {},
       });
     },
- 
   },
 });

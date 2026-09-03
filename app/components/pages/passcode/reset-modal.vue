@@ -77,7 +77,7 @@
                 class="w-100"
                 @click="
                   () => {
-                    onChangePasscode();
+                    onChangePasscode(isActive);
                   }
                 "
                 >Reset Passcode</v-btn
@@ -96,13 +96,14 @@ const props = defineProps({
   item: Object as PropType<PasscodeInfoModel>,
 });
 const passcodeStore = usePasscodeStore();
+const loginStore = useLoginStore();
 const nuxtApp: any = useNuxtApp();
 //paramitter
 const txtNewPasscode = ref();
 const txtConfirmPasscode = ref();
 const showPw = ref(false);
 
-const onChangePasscode = async () => {
+const onChangePasscode = async (isActive: any) => {
   if (
     !txtNewPasscode.value ||
     !txtConfirmPasscode.value ||
@@ -125,6 +126,7 @@ const onChangePasscode = async () => {
         purepose: props.item?.PUREPOSE,
         new_passcode: txtNewPasscode.value,
         confirm_passcode: txtConfirmPasscode.value,
+        action_by: loginStore.loginUser?.USER_NAME,
       };
       nuxtApp.$openLoading();
       await passcodeStore
@@ -134,10 +136,11 @@ const onChangePasscode = async () => {
           txtNewPasscode.value = "";
           txtConfirmPasscode.value = "";
           if (result.ERROR_CODE == "00") {
-            nuxtApp.$openAlert(
-              "S",
-              result.ERROR_CODE + ": " + result.ERROR_DESC
-            );
+            nuxtApp
+              .$openAlert("S", result.ERROR_CODE + ": " + result.ERROR_DESC)
+              .then((rr: any) => {
+                isActive.value = false;
+              });
           } else {
             nuxtApp.$openAlert(
               "E",

@@ -11,7 +11,7 @@
       <template
         v-if="
           itemSelected?.PRO_ID != nuxtApp.$env.projectID ||
-          nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE)
+          loginStore.isAdmin
         "
       >
         <v-btn
@@ -251,8 +251,8 @@
                     </v-col>
                     <div
                       v-if="
-                        nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE) ||
-                        nuxtApp.$isIT(loginStore.loginUser?.ROLE_CODE)
+                        loginStore.isAdmin||
+                        loginStore.isDev
                       "
                     >
                       <div>
@@ -297,8 +297,8 @@
               <div
                 class="mt-4"
                 v-if="
-                  nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE) ||
-                  nuxtApp.$isIT(loginStore.loginUser?.ROLE_CODE)
+                  loginStore.isAdmin||
+                  loginStore.isDev
                 "
               >
                 <pages-project-add-manager

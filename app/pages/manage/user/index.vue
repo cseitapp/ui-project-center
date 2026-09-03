@@ -159,7 +159,7 @@
             </template>
           </v-tooltip>
           <pages-user-reset-password-modal
-            v-if="nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE)"
+            v-if="loginStore.isAdmin"
             :item="item"
             @on-success="onLoadUserLoginList"
           ></pages-user-reset-password-modal>
@@ -186,10 +186,7 @@
             </template>
           </v-tooltip>
 
-          <v-tooltip
-            text="Reset all device code"
-            v-if="nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE)"
-          >
+          <v-tooltip text="Reset all device code" v-if="loginStore.isAdmin">
             <template v-slot:activator="{ props }">
               <v-btn
                 :variant="'tonal'"
@@ -270,14 +267,18 @@ onMounted(async () => {
 
 const onLoadUserLoginList = async () => {
   nuxtApp.$openLoading();
-  await userStore.acGetUserLoginList({
+  const body = {
     user_name: "",
     pos_id: "",
     team_id: "",
     section_id: "",
-    branch_code: "",
+    branch_code:
+      loginStore.isAdmin || loginStore.isDev
+        ? ""
+        : loginStore.loginUser?.BR_CODE,
     status: "",
-  });
+  };
+  await userStore.acGetUserLoginList(body);
   dataList.value = userStore.getUserLoginList;
   nuxtApp.$closeLoading();
 };
@@ -310,6 +311,7 @@ const onUnlockUser = async (item: UserLoginModel) => {
       await userStore
         .acUnlockUserLogin({
           user_name: item.USER_NAME,
+          action_by: loginStore.loginUser?.USER_NAME,
         })
         .then(async (result: ResponseModel) => {
           nuxtApp.$closeLoading();
@@ -374,14 +376,16 @@ const onResetPasswordToDefault = async (item: UserLoginModel) => {
           user_name: item.USER_NAME,
           new_password: "123456",
           confirm_password: "123456",
+          action_by:loginStore.loginUser?.USER_NAME
         })
         .then(async (result: ResponseModel) => {
           nuxtApp.$closeLoading();
           if (result.ERROR_CODE == "00") {
+            await onLoadUserLoginList();
             nuxtApp
               .$openAlert("S", result.ERROR_CODE + ": " + result.ERROR_DESC)
               .then(async (r: any) => {
-                await onLoadUserLoginList();
+                
               });
           } else {
             nuxtApp.$openAlert(

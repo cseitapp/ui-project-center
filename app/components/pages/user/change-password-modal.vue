@@ -132,6 +132,8 @@ const props = defineProps({
 });
 
 const userStore = useUserStore();
+const loginStore = useLoginStore();
+
 const nuxtApp: any = useNuxtApp();
 //paramitter
 const myForm = ref();
@@ -159,11 +161,12 @@ const onChangePasscode = async (isActive: any) => {
       .$openAlert("Q", "ທ່ານຕ້ອງການ restet ແທ້ບໍ?")
       .then(async (r: any) => {
         var body = {
-          project_id:nuxtApp.$env.projectID,
+          project_id: nuxtApp.$env.projectID,
           user_name: props.item?.USER_NAME,
           password: txtOldPasscode.value,
           new_password: txtNewPasscode.value,
           confirm_password: txtConfirmPasscode.value,
+          action_by: loginStore.loginUser?.USER_NAME,
         };
         nuxtApp.$openLoading();
         await userStore

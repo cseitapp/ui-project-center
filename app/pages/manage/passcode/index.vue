@@ -84,26 +84,25 @@
           </template>
           <v-card rounded="lg">
             <v-card-text>
-             
-        <v-radio-group
-          inline
-          v-model="item.PASSCODE_STATUS"
-          hide-details
-          @update:model-value="onUpdateStatus(item)"
-          justify="end"
-           density="compact"
-        >
-          <v-spacer></v-spacer>
-          <div>
-            <v-radio
-              v-for="r in utilStore.getActiveUnActiveStatus"
-              :label="r.TEXT"
-              :value="r.CODE"
-              :class="r.CLASS"
-              density="compact"
-            ></v-radio>
-          </div>
-        </v-radio-group>
+              <v-radio-group
+                inline
+                v-model="item.PASSCODE_STATUS"
+                hide-details
+                @update:model-value="onUpdateStatus(item)"
+                justify="end"
+                density="compact"
+              >
+                <v-spacer></v-spacer>
+                <div>
+                  <v-radio
+                    v-for="r in utilStore.getActiveUnActiveStatus"
+                    :label="r.TEXT"
+                    :value="r.CODE"
+                    :class="r.CLASS"
+                    density="compact"
+                  ></v-radio>
+                </div>
+              </v-radio-group>
             </v-card-text>
           </v-card>
         </v-menu>
@@ -128,11 +127,14 @@
               </v-btn>
             </template>
           </v-tooltip>
-          <pages-passcode-reset-modal :item="item" v-if="nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE)"></pages-passcode-reset-modal>
+          <pages-passcode-reset-modal :item="item"></pages-passcode-reset-modal>
           <pages-passcode-change-modal
             :item="item"
           ></pages-passcode-change-modal>
-          <v-tooltip :text="$t('Delete')">
+          <v-tooltip
+            :text="$t('Delete')"
+            v-if="loginStore.isAdmin || loginStore.isDev"
+          >
             <template v-slot:activator="{ props }">
               <v-btn
                 variant="tonal"
@@ -224,13 +226,18 @@ onMounted(async () => {
   await onLoadPasscodeList();
   await passcodeStore.acGetPasscodeType({ status: "A" });
   await employeeStore.acGetEmployeeList({});
-  
 });
 
 const onLoadPasscodeList = async () => {
   nuxtApp.$openLoading();
   await passcodeStore.acGetPasscodeList({
     user_name: "",
+    team_id: "",
+    section_id: "",
+    branch_code:
+      loginStore.isAdmin || loginStore.isDev
+        ? ""
+        : loginStore.loginUser?.BR_CODE,
     purepose: "",
     status: "",
   });
@@ -295,6 +302,7 @@ const onUnlockPasscode = async (item: PasscodeInfoModel) => {
       await passcodeStore
         .acUnlockPasscode({
           user_name: item.USER_NAME,
+          action_by: loginStore.loginUser?.USER_NAME,
           purepose: item.PUREPOSE,
         })
         .then(async (result: ResponseModel) => {

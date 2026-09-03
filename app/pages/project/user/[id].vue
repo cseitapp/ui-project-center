@@ -92,7 +92,7 @@
           <v-menu
             open-on-hover
             :close-on-content-click="false"
-            v-if="nuxtApp.$isAdmin(loginStore.loginUser?.ROLE_CODE)"
+            v-if="loginStore.isAdmin"
           >
             <template v-slot:activator="{ props }">
               <v-btn
