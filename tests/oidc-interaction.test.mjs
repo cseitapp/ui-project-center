@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { createJiti } from "jiti";
 import * as h3 from "h3";
+import { FakeRedis } from "./helpers/fake-redis.mjs";
 
 Object.assign(globalThis, h3);
 const runtime = {
@@ -14,6 +15,8 @@ const runtime = {
 };
 globalThis.useRuntimeConfig = () => runtime;
 const jiti = createJiti(import.meta.url);
+const { createAuthSessionStore, setAuthSessionStoreForTests } = await jiti.import("../server/utils/authSessionStore.ts");
+setAuthSessionStoreForTests(createAuthSessionStore(new FakeRedis(), "community:test:"));
 
 test("live Community sessions expose only a safe profile lookup and expire server-side", async () => {
   const { createAuthSession, findCommunityProfile } = await jiti.import("../server/utils/authSession.ts");
@@ -30,18 +33,18 @@ test("live Community sessions expose only a safe profile lookup and expire serve
   }));
   await h3.toWebHandler(app)(new Request("http://localhost/login"));
 
-  assert.deepEqual(findCommunityProfile("CSE153"), {
+  assert.deepEqual(await findCommunityProfile("CSE153"), {
     USER_NAME: "CSE153",
     FULL_NAME_EN: "Test User",
     ROLE_CODE: "GENERAL",
     EMAIL: "test@example.com",
   });
-  assert.equal(findCommunityProfile("UNKNOWN"), null);
+  assert.equal(await findCommunityProfile("UNKNOWN"), null);
 
   const realNow = Date.now;
   Date.now = () => realNow() + 61_000;
   try {
-    assert.equal(findCommunityProfile("CSE153"), null);
+    assert.equal(await findCommunityProfile("CSE153"), null);
   } finally {
     Date.now = realNow;
   }

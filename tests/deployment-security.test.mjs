@@ -21,7 +21,7 @@ test("deployment documents private runtime session configuration", async () => {
     assert.match(readme, new RegExp(name));
   }
   assert.match(readme, /at least 32 characters/i);
-  assert.match(readme, /single.*process|one.*replica/i);
+  assert.match(readme, /shared by multiple API\s+replicas/i);
   assert.match(compose, /env_file:\s*\n\s*-\s*\.env\.production/);
   for (const name of [
     "NUXT_PROJECT_CENTER_PATH",
@@ -30,6 +30,22 @@ test("deployment documents private runtime session configuration", async () => {
     "NUXT_PUBLIC_PROJECT_ID",
     "NUXT_DOMAIN",
   ]) {
+    assert.match(envExample, new RegExp(name));
+  }
+});
+
+test("deployment provides private persistent Redis for sessions and OIDC", async () => {
+  const [compose, envExample] = await Promise.all([
+    readFile(new URL("../compose.yaml", import.meta.url), "utf8"),
+    readFile(new URL("../.env.example", import.meta.url), "utf8"),
+  ]);
+  assert.match(compose, /redis:\s*\n/);
+  assert.match(compose, /redis-server\s+--appendonly\s+yes/);
+  assert.match(compose, /healthcheck:/);
+  assert.match(compose, /redis-data:\/data/);
+  const redisBlock = compose.match(/\n  redis:\n([\s\S]*?)(?=\n  [a-z])/i)?.[1] ?? "";
+  assert.doesNotMatch(redisBlock, /ports:/);
+  for (const name of ["NUXT_REDIS_URL", "NUXT_SESSION_PREFIX", "NUXT_OIDC_ADAPTER_PREFIX"]) {
     assert.match(envExample, new RegExp(name));
   }
 });

@@ -51,6 +51,9 @@ Required runtime variables:
 NUXT_SESSION_PASSWORD=
 NUXT_AUTH_COOKIE_NAME=community-session
 NUXT_COOKIE_LIFE=86400
+NUXT_REDIS_URL=redis://redis:6379
+NUXT_SESSION_PREFIX=community:session:
+NUXT_OIDC_ADAPTER_PREFIX=community:oidc:
 ```
 
 All values used by Nuxt runtime configuration must use their `NUXT_` names in
@@ -64,10 +67,12 @@ During the legacy-cookie migration, set `NUXT_LEGACY_AUTH_COOKIE_NAME` and
 example `.cselao.la`). This lets Community expire both host-only and
 parent-domain legacy cookies. New `community-session` cookies remain host-only.
 
-The current session and OIDC provider adapters are intentionally limited to a
-single process and one replica. Restarting Community signs users out and clears
-in-flight authorization transactions. Configure shared Redis-backed session and
-OIDC adapters before adding workers or replicas.
+Community stores login sessions and OIDC provider state in the private Redis
+service declared by Compose. Redis persistence allows sessions and in-flight
+authorization state to survive API restarts and be shared by multiple API
+replicas. Do not publish the Redis port or fall back to process-local memory.
+The first deployment of this migration invalidates the former in-memory
+sessions, so users must log in once after deployment.
 
 Authentication cookies are host-only, HttpOnly, `SameSite=Lax`, and require
 HTTPS in production. The reverse proxy must terminate TLS before production

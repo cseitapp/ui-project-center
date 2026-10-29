@@ -113,7 +113,7 @@ export function buildOidcConfig(runtime: OidcRuntime, nodeEnv = process.env.NODE
     ttl: { AuthorizationCode: codeLifetime },
     interactions: { url: (_ctx: unknown, interaction: { uid: string }) => `/api/oidc/interaction/${interaction.uid}` },
     findAccount: async (_ctx: unknown, accountId: string) => {
-      const profile = findCommunityProfile(accountId);
+      const profile = await findCommunityProfile(accountId);
       if (!profile) return undefined;
       return {
         accountId: profile.USER_NAME,

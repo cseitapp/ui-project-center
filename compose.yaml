@@ -10,8 +10,23 @@ services:
       - .env.production
     environment:
       NODE_ENV: production
+    depends_on:
+      redis:
+        condition: service_healthy
   # ports:
   #   - 2000:2000
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   nginx:
     container_name: nginx-ui-cse-project-center
@@ -22,3 +37,6 @@ services:
       - api
     ports:
       - 2000:2000
+
+volumes:
+  redis-data:

@@ -9,6 +9,7 @@ import {
   type SessionConfig,
 } from "h3";
 import config from "./config";
+import { getAuthSessionStore, type StoredAuthSession } from "./authSessionStore";
 
 const profileFields = [
   "ROLE_ID", "ROLE_CODE", "EMP_ID", "USER_NAME", "FULL_NAME_LA", "FULL_NAME_EN",
@@ -23,13 +24,9 @@ export type SafeCommunityProfile = Partial<Record<(typeof profileFields)[number]
   USER_NAME: string;
 };
 
-type StoredSession = {
+type StoredSession = StoredAuthSession & {
   user: SafeCommunityProfile;
-  expiresAt: number;
 };
-
-// Phase one deliberately supports one process. Redis replaces this adapter before scaling.
-const activeSessions = new Map<string, StoredSession>();
 
 function sessionOptions(): SessionConfig {
   const runtime = config();
@@ -82,23 +79,11 @@ export function safeCommunityProfile(user: Record<string, unknown>): SafeCommuni
   ) as SafeCommunityProfile;
 }
 
-function pruneExpired(now: number) {
-  for (const [id, session] of activeSessions) {
-    if (session.expiresAt <= now) activeSessions.delete(id);
-  }
-}
-
-export function findCommunityProfile(userName: string): SafeCommunityProfile | null {
+export async function findCommunityProfile(userName: string): Promise<SafeCommunityProfile | null> {
   const normalized = userName.trim().toUpperCase();
   if (!normalized) return null;
-  const now = Date.now();
-  pruneExpired(now);
-  for (const session of activeSessions.values()) {
-    if (session.expiresAt > now && session.user.USER_NAME.toUpperCase() === normalized) {
-      return safeCommunityProfile(session.user);
-    }
-  }
-  return null;
+  const profile = await getAuthSessionStore().findProfile(normalized);
+  return profile ? safeCommunityProfile(profile) : null;
 }
 
 export async function createAuthSession(
@@ -108,15 +93,16 @@ export async function createAuthSession(
   const options = sessionOptions();
   const profile = safeCommunityProfile(user);
   const now = Date.now();
-  pruneExpired(now);
-  if (event.context?.authSessionId) activeSessions.delete(event.context.authSessionId);
+  if (event.context?.authSessionId) {
+    await getAuthSessionStore().delete(event.context.authSessionId, event.context.auth?.USER_NAME);
+  }
   event.context ??= {};
   event.context.sessions = {};
   const id = crypto.randomUUID();
   event.context.sessions[options.name!] = { id, createdAt: now, data: {} };
-  await updateSession(event, options);
   const stored = { user: profile, expiresAt: now + options.maxAge! * 1000 };
-  activeSessions.set(id, stored);
+  await getAuthSessionStore().set(id, stored, options.maxAge!);
+  await updateSession(event, options);
   event.context.authSessionId = id;
   event.context.authSession = stored;
   event.context.auth = profile;
@@ -140,25 +126,31 @@ export async function readAuthSession(event: H3Event): Promise<void> {
   const cookie = getCookie(event, name);
   if (!cookie) return;
   const options = sessionOptions();
+  let session;
   try {
-    const session = await unsealSession(event, options, cookie);
-    const stored = session.id ? activeSessions.get(session.id) : undefined;
-    if (!stored || stored.expiresAt <= Date.now()) {
-      if (session.id) activeSessions.delete(session.id);
-      deleteCookie(event, name, options.cookie || {});
-      return;
-    }
-    event.context.authSessionId = session.id;
-    event.context.authSession = stored;
-    event.context.auth = safeCommunityProfile(stored.user);
+    session = await unsealSession(event, options, cookie);
   } catch {
     deleteCookie(event, name, options.cookie || {});
+    return;
   }
+  const stored = session.id
+    ? await getAuthSessionStore().get(session.id) as StoredSession | null
+    : null;
+  if (!stored || stored.expiresAt <= Date.now()) {
+    if (session.id) await getAuthSessionStore().delete(session.id, stored?.user.USER_NAME);
+    deleteCookie(event, name, options.cookie || {});
+    return;
+  }
+  event.context.authSessionId = session.id;
+  event.context.authSession = stored;
+  event.context.auth = safeCommunityProfile(stored.user);
 }
 
-export function clearAuthSession(event: H3Event): void {
+export async function clearAuthSession(event: H3Event): Promise<void> {
   const options = sessionOptions();
-  if (event.context.authSessionId) activeSessions.delete(event.context.authSessionId);
+  if (event.context.authSessionId) {
+    await getAuthSessionStore().delete(event.context.authSessionId, event.context.auth?.USER_NAME);
+  }
   deleteCookie(event, options.name!, options.cookie || {});
   event.context.auth = null;
   event.context.authSession = null;

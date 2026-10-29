@@ -4,6 +4,7 @@ import test from "node:test";
 import { createJiti } from "jiti";
 import CryptoJS from "crypto-js";
 import * as h3 from "h3";
+import { FakeRedis } from "./helpers/fake-redis.mjs";
 
 Object.assign(globalThis, h3);
 const runtime = {
@@ -16,6 +17,9 @@ const runtime = {
 };
 globalThis.useRuntimeConfig = () => runtime;
 const jiti = createJiti(import.meta.url);
+const { createAuthSessionStore, setAuthSessionStoreForTests } = await jiti.import("../server/utils/authSessionStore.ts");
+const testStore = createAuthSessionStore(new FakeRedis(), "community:test:");
+setAuthSessionStoreForTests(testStore);
 
 function appWith(...handlers) {
   const app = h3.createApp();
@@ -98,6 +102,31 @@ test("forged and legacy AES cookies fail closed", async () => {
       /Max-Age=0/.test(value) &&
       /Domain=\.cselao\.la/i.test(value),
   ));
+});
+
+test("temporary Redis failure does not invalidate a valid browser session cookie", async () => {
+  const cookie = (await issueSession()).split(";")[0];
+  const authMiddleware = await jiti.import("../server/middleware/auth.ts", { default: true });
+  setAuthSessionStoreForTests({
+    get: async () => { throw new Error("redis unavailable"); },
+    set: async () => {},
+    findProfile: async () => null,
+    delete: async () => {},
+  });
+  const originalConsoleError = console.error;
+  console.error = () => {};
+  try {
+    const response = await appWith(authMiddleware)(new Request("http://localhost/auth", {
+      headers: { cookie },
+    }));
+    assert.equal(response.status, 500);
+    assert.ok(!response.headers.getSetCookie().some((value) =>
+      value.startsWith(`${runtime.authCookieName}=`) && /Max-Age=0/.test(value),
+    ));
+  } finally {
+    console.error = originalConsoleError;
+    setAuthSessionStoreForTests(testStore);
+  }
 });
 
 test("expired server record deletes the retained browser cookie", async () => {
