@@ -55,8 +55,17 @@ export default defineNuxtConfig({
     //key
     authUserKey: process.env.AUTH_USER_KEY,
     authCookieKey: process.env.AUTH_COOKIE_KEY,
-    authCookieName: process.env.AUTH_COOKIE_NAME,
+    legacyAuthCookieName: process.env.AUTH_COOKIE_NAME,
+    sessionPassword: "",
+    authCookieName: "community-session",
     cookieLife: process.env.COOKIE_LIFT,
+    oidcIssuer: "",
+    oidcKeyId: "",
+    oidcPrivateKeyBase64: "",
+    oidcCodeLifetime: 60,
+    oidcClientEdocumentId: "",
+    oidcClientEdocumentSecret: "",
+    oidcClientEdocumentRedirectUri: "",
     allowOrigin:process.env.ALLOW_ORIGIN,
     domain:process.env.DOMAIN,
 
@@ -66,12 +75,6 @@ export default defineNuxtConfig({
       projectID: process.env.PROJECT_ID,
       //server
       serverProjectCenter: "/api/projectCenter",
-      //key
-      authUserKey: process.env.AUTH_USER_KEY,
-      authCookieKey: process.env.AUTH_COOKIE_KEY,
-      authCookieName: process.env.AUTH_COOKIE_NAME,
-      cookieLife: process.env.COOKIE_LIFT,
-
       menukey: process.env.MENU_KEY,
       currentMenukey: process.env.CURRENT_MENU_KEY,
       langKey: process.env.LANG_KEY,

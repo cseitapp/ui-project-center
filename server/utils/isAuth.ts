@@ -1,19 +1,8 @@
-import { createError, sendError } from "h3";
-import config from "./config";
+import { createError, type H3Event } from "h3";
 
-export default defineEventHandler((event) => {
-  const myCookie = getCookie(event, config().authCookieName);
-
-  if (typeof myCookie == "undefined") {
-    sendError(
-      event,
-      createError({
-        statusCode: 498,
-        statusMessage: "Please login",
-      })
-    );
-    return false;
-  } else {
-    return true;
+export default function isAuth(event: H3Event) {
+  if (!event.context.auth?.USER_NAME) {
+    throw createError({ statusCode: 401, statusMessage: "Please login" });
   }
-});
+  return true;
+}

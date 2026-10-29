@@ -122,6 +122,7 @@
 
 <script setup lang="ts">
 const nuxtApp: any = useNuxtApp();
+const route = useRoute();
 const myForm: any = ref(null);
 // const txtUserName = ref("CSE891");
 // const txtPassword = ref("admincse");
@@ -131,6 +132,9 @@ const showPw = ref(false);
 
 const loginStore = useLoginStore();
 const menuStore = useMenuStore();
+const oidcUid = computed(() =>
+  typeof route.query.oidc_uid === "string" ? route.query.oidc_uid : "",
+);
 
 //clear filter
 // leaveStore.setLeaveFilterBody(null);
@@ -265,6 +269,11 @@ const onSubmit = async () => {
       .loginSystem(body)
       .then(async (result: ResponseModel) => {
         if (result.ERROR_CODE == "00") {
+          if (oidcUid.value) {
+            nuxtApp.$closeLoading();
+            window.location.assign(`/api/oidc/interaction/${encodeURIComponent(oidcUid.value)}`);
+            return;
+          }
           menuStore
             .acGetLoginMenuList({
               project_id: nuxtApp.$env.projectID,

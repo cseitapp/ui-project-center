@@ -1,9 +1,13 @@
 services:
   api:
-    image: ui-cse-project-center:v0.1
+    image: ui-cse-project-center:v1.1
     build:
       context: .
       dockerfile: ./Dockerfile
+    # .env.production must define NUXT_SESSION_PASSWORD,
+    # NUXT_AUTH_COOKIE_NAME, and NUXT_COOKIE_LIFE at runtime.
+    env_file:
+      - .env.production
     environment:
       NODE_ENV: production
   # ports:

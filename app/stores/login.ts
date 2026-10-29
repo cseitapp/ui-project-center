@@ -1,6 +1,3 @@
-// @ts-ignore
-import CryptoJS from "crypto-js";
-
 interface State {
   user: LoginModel | null;
 }
@@ -16,66 +13,23 @@ export const useLoginStore = defineStore("login", {
     isGeneral: (state): boolean => state.user?.ROLE_CODE == "GENERAL",
   },
   actions: {
-    loginSystem(body: object) {
-      return new Promise(
-        async (
-          resolve: (val: ResponseModel) => any,
-          reject: (val: string) => any
-        ) => {
-          await $fetch(nuxtApp.$env.serverProjectCenter + "/login", {
-            method: "POST",
-            body: body,
-          })
-            .then(async (result: any) => {
-              try {
-                ResponseModelConvert.toResponseModel(JSON.stringify(result));
-                this.user = null;
-                if (result.ERROR_CODE == "00") {
-                  this.user = result.DATA[0];
-                }
-                resolve(result);
-              } catch (error) {
-                reject(nuxtApp.$t("somthingWrong"));
-              }
-            })
-            .catch((err) => {
-              reject(err.message);
-            });
-        }
+    async loginSystem(body: object) {
+      const result = await $fetch<ResponseModel>(
+        nuxtApp.$env.serverProjectCenter + "/login",
+        { method: "POST", body },
       );
+      this.user = result.ERROR_CODE === "00" ? result.DATA[0] : null;
+      return result;
     },
 
-    setLoginUser() {
-      return new Promise(
-        async (
-          resolve: (val: ResponseModel) => any,
-          reject: (val: string) => any
-        ) => {
-          try {
-            const name = nuxtApp.$env.authCookieName;
-            const myCookie: any = useCookie(name);
-            if (typeof myCookie.value != "undefined") {
-              var bytes = await CryptoJS.AES.decrypt(
-                myCookie.value,
-                nuxtApp.$env.authCookieKey
-              );
-              var originalText = await bytes.toString(CryptoJS.enc.Utf8);
-              this.user = JSON.parse(originalText);
-              resolve(JSON.parse(originalText));
-            } else {
-              showError({
-                statusCode: 500,
-                statusMessage: "Please login",
-              });
-            }
-          } catch (error) {
-            showError({
-              statusCode: 500,
-              statusMessage: "Please login",
-            });
-          }
-        }
-      );
+    async setLoginUser() {
+      try {
+        this.user = await $fetch<LoginModel>("/api/auth/session");
+        return this.user;
+      } catch (error) {
+        this.user = null;
+        throw error;
+      }
     },
 
     async logOutSystem() {
@@ -83,6 +37,7 @@ export const useLoginStore = defineStore("login", {
         method: "POST",
         body: {},
       });
+      this.user = null;
     },
   },
 });

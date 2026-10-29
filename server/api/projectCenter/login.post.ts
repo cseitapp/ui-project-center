@@ -1,5 +1,5 @@
 import config from "../../utils/config";
-import encrypt from "../../utils/encrypt";
+import { createAuthSession } from "../../utils/authSession";
 import fetchData from "../../utils/fetchData";
 import isSendError from "../../utils/isSendError";
 
@@ -21,20 +21,18 @@ export default defineEventHandler(async (event) => {
     .then(async (result) => {
       var res: any = JSON.parse(JSON.stringify(result));
       if (res.ERROR_CODE == "00") {
-        ///SET COOKIES
-        const cookieLife: any = config().cookieLife;
-        var userData = JSON.stringify(res.DATA[0]);
-        const ciphertext = await encrypt(userData, config().authCookieKey);
-        await setCookie(event, config().authCookieName, ciphertext, {
-          domain: config().domain,
-          httpOnly: true,
-          sameSite: "lax", // or 'none' if needed
-          secure: true,
-          maxAge: cookieLife, // 1day
-        });
-        event.context.auth = userData;
+        const profile = await createAuthSession(event, res.DATA[0]);
+        return {
+          ERROR_CODE: res.ERROR_CODE,
+          ERROR_DESC: res.ERROR_DESC,
+          DATA: [profile],
+        };
       }
-      return result;
+      return {
+        ERROR_CODE: res.ERROR_CODE,
+        ERROR_DESC: res.ERROR_DESC,
+        DATA: [],
+      };
     })
     .catch((err: any) => {
       return isSendError(event, err);

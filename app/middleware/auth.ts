@@ -1,22 +1,14 @@
-export default defineNuxtRouteMiddleware(async (to, from) => {
-  // // isAuthenticated() is an example method verifying if a user is authenticated
-  const isAuthenticated = ref(false);
-  // const errorMsg = ref();
-
-  await $fetch("/api/auth")
-    .then((result) => {
-      isAuthenticated.value = result;
-    })
-    .catch((err) => {
-      isAuthenticated.value = false;
-      showError({
-        statusCode: err.statusCode,
-        statusMessage: err.statusText,
-      });
-    });
-
-  if (isAuthenticated.value === false) {
-    return clearError({ redirect: "/" });
-    // return navigateTo("/");
+export default defineNuxtRouteMiddleware(async (to) => {
+  try {
+    await useLoginStore().setLoginUser();
+  } catch (error: any) {
+    if (error.statusCode === 401 || error.status === 401) {
+      if (to.path !== "/") return navigateTo("/");
+      return;
+    }
+    return abortNavigation(createError({
+      statusCode: error.statusCode || 503,
+      statusMessage: "Unable to verify session. Please try again.",
+    }));
   }
 });
