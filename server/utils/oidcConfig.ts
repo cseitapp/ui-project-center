@@ -2,6 +2,7 @@ import { createPrivateKey } from "node:crypto";
 import { createError } from "h3";
 import { findCommunityProfile } from "./authSession";
 import { buildOidcAccountClaims } from "./oidcInteraction";
+import { createOidcErrorRenderer } from "./oidcErrorRenderer";
 
 type OidcRuntime = {
   oidcIssuer?: unknown;
@@ -111,6 +112,10 @@ export function buildOidcConfig(runtime: OidcRuntime, nodeEnv = process.env.NODE
       end_session: "/oauth/logout",
     },
     ttl: { AuthorizationCode: codeLifetime },
+    renderError: createOidcErrorRenderer({
+      clientId,
+      redirectUri: redirectUrl.href,
+    }),
     interactions: { url: (_ctx: unknown, interaction: { uid: string }) => `/api/oidc/interaction/${interaction.uid}` },
     findAccount: async (_ctx: unknown, accountId: string) => {
       const profile = await findCommunityProfile(accountId);

@@ -97,3 +97,51 @@ test("OIDC middleware is scoped to discovery and oauth routes", async () => {
   assert.match(source, /\/oauth\//);
   assert.doesNotMatch(source, /app\.use\(["']\/["']/);
 });
+
+test("OIDC authorization server errors return registered clients to their callback", async () => {
+  const { createOidcErrorRenderer } = await jiti.import("../server/utils/oidcErrorRenderer.ts");
+  const renderError = createOidcErrorRenderer({
+    clientId: validRuntime.oidcClientEdocumentId,
+    redirectUri: validRuntime.oidcClientEdocumentRedirectUri,
+  });
+  const ctx = {
+    path: "/oauth/authorize",
+    query: {
+      client_id: validRuntime.oidcClientEdocumentId,
+      redirect_uri: validRuntime.oidcClientEdocumentRedirectUri,
+      state: "original-state",
+    },
+    redirect(location) {
+      this.location = location;
+    },
+  };
+
+  await renderError(ctx, { error: "server_error", error_description: "must-not-leak" });
+
+  const location = new URL(ctx.location);
+  assert.equal(location.origin + location.pathname, validRuntime.oidcClientEdocumentRedirectUri);
+  assert.equal(location.searchParams.get("error"), "server_error");
+  assert.equal(location.searchParams.get("state"), "original-state");
+  assert.equal(location.searchParams.has("error_description"), false);
+});
+
+test("OIDC error renderer never redirects unregistered authorization requests", async () => {
+  const { createOidcErrorRenderer } = await jiti.import("../server/utils/oidcErrorRenderer.ts");
+  const renderError = createOidcErrorRenderer({
+    clientId: validRuntime.oidcClientEdocumentId,
+    redirectUri: validRuntime.oidcClientEdocumentRedirectUri,
+  });
+
+  for (const query of [
+    { client_id: "attacker", redirect_uri: validRuntime.oidcClientEdocumentRedirectUri, state: "state" },
+    { client_id: validRuntime.oidcClientEdocumentId, redirect_uri: "https://attacker.example/callback", state: "state" },
+    { client_id: validRuntime.oidcClientEdocumentId, redirect_uri: validRuntime.oidcClientEdocumentRedirectUri },
+  ]) {
+    const ctx = { path: "/oauth/authorize", query, type: "", body: "" };
+    await renderError(ctx, { error: "server_error" });
+    assert.equal("location" in ctx, false);
+    assert.equal(ctx.type, "html");
+    assert.match(ctx.body, /Authorization failed/);
+    assert.doesNotMatch(ctx.body, /attacker|server_error/);
+  }
+});
