@@ -1,6 +1,8 @@
 type ErrorRendererOptions = {
   clientId: string;
   redirectUri: string;
+  sessionCookieName?: string;
+  secureCookie?: boolean;
 };
 
 type OidcErrorContext = {
@@ -8,13 +10,16 @@ type OidcErrorContext = {
   query?: Record<string, unknown>;
   type?: string;
   body?: string;
+  cookies?: {
+    set: (name: string, value: string | null, options: Record<string, unknown>) => unknown;
+  };
   redirect?: (location: string) => unknown;
 };
 
 export function createOidcErrorRenderer(options: ErrorRendererOptions) {
   return async function renderOidcError(
     ctx: OidcErrorContext,
-    _output: Record<string, unknown>,
+    output: Record<string, unknown>,
   ) {
     const query = ctx.query ?? {};
     const validAuthorizationRequest = ctx.path === "/oauth/authorize" &&
@@ -25,6 +30,19 @@ export function createOidcErrorRenderer(options: ErrorRendererOptions) {
       typeof ctx.redirect === "function";
 
     if (validAuthorizationRequest) {
+      if (
+        output.error === "server_error" &&
+        options.sessionCookieName &&
+        ctx.cookies
+      ) {
+        ctx.cookies.set(options.sessionCookieName, null, {
+          httpOnly: true,
+          secure: options.secureCookie === true,
+          sameSite: "lax",
+          path: "/",
+          overwrite: true,
+        });
+      }
       const callback = new URL(options.redirectUri);
       callback.searchParams.set("error", "server_error");
       callback.searchParams.set("state", query.state as string);

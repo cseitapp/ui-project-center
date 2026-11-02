@@ -5,6 +5,7 @@ import { buildOidcAccountClaims } from "./oidcInteraction";
 import { createOidcErrorRenderer } from "./oidcErrorRenderer";
 
 type OidcRuntime = {
+  authCookieName?: unknown;
   oidcIssuer?: unknown;
   oidcKeyId?: unknown;
   oidcPrivateKeyBase64?: unknown;
@@ -70,6 +71,7 @@ export function buildOidcConfig(runtime: OidcRuntime, nodeEnv = process.env.NODE
   }
   const clientId = requiredString(runtime.oidcClientEdocumentId, "E-Document client ID");
   const clientSecret = requiredString(runtime.oidcClientEdocumentSecret, "E-Document client secret", 32);
+  const sessionCookieName = requiredString(runtime.authCookieName, "session cookie name");
   const postLogout = `${redirectUrl.origin}/`;
 
   const configuration = {
@@ -115,6 +117,8 @@ export function buildOidcConfig(runtime: OidcRuntime, nodeEnv = process.env.NODE
     renderError: createOidcErrorRenderer({
       clientId,
       redirectUri: redirectUrl.href,
+      sessionCookieName,
+      secureCookie: nodeEnv === "production",
     }),
     interactions: { url: (_ctx: unknown, interaction: { uid: string }) => `/api/oidc/interaction/${interaction.uid}` },
     findAccount: async (_ctx: unknown, accountId: string) => {

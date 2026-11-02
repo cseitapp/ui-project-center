@@ -12,6 +12,7 @@ const privateKeyBase64 = Buffer.from(privateKey.export({
 })).toString("base64");
 
 const validRuntime = {
+  authCookieName: "community-session",
   oidcIssuer: "https://community.cselao.la",
   oidcKeyId: "community-rs256-test",
   oidcPrivateKeyBase64: privateKeyBase64,
@@ -123,6 +124,47 @@ test("OIDC authorization server errors return registered clients to their callba
   assert.equal(location.searchParams.get("error"), "server_error");
   assert.equal(location.searchParams.get("state"), "original-state");
   assert.equal(location.searchParams.has("error_description"), false);
+});
+
+test("OIDC authorization server errors clear the stale Community session cookie", async () => {
+  const { createOidcErrorRenderer } = await jiti.import("../server/utils/oidcErrorRenderer.ts");
+  const renderError = createOidcErrorRenderer({
+    clientId: validRuntime.oidcClientEdocumentId,
+    redirectUri: validRuntime.oidcClientEdocumentRedirectUri,
+    sessionCookieName: "community-session",
+    secureCookie: true,
+  });
+  const cookieWrites = [];
+  const ctx = {
+    path: "/oauth/authorize",
+    query: {
+      client_id: validRuntime.oidcClientEdocumentId,
+      redirect_uri: validRuntime.oidcClientEdocumentRedirectUri,
+      state: "original-state",
+    },
+    cookies: {
+      set(name, value, options) {
+        cookieWrites.push({ name, value, options });
+      },
+    },
+    redirect(location) {
+      this.location = location;
+    },
+  };
+
+  await renderError(ctx, { error: "server_error" });
+
+  assert.deepEqual(cookieWrites, [{
+    name: "community-session",
+    value: null,
+    options: {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+      overwrite: true,
+    },
+  }]);
 });
 
 test("OIDC error renderer never redirects unregistered authorization requests", async () => {
