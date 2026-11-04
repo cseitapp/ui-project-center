@@ -12,7 +12,7 @@ export default defineNuxtConfig({
     head: {
       charset: "utf-8",
       viewport: "width=device-width, initial-scale=1",
-      title: "CSE Project center",
+      title: "CSE Community",
       script: [{ src: "/js/particles.min.js" }],
 
       link: [{ rel: "icon", type: "image/x-icon", href: "/cse.ico" }],
@@ -59,16 +59,6 @@ export default defineNuxtConfig({
     sessionPassword: "",
     authCookieName: "community-session",
     cookieLife: process.env.COOKIE_LIFT,
-    redisUrl: "",
-    sessionPrefix: "community:session:",
-    oidcAdapterPrefix: "community:oidc:",
-    oidcIssuer: "",
-    oidcKeyId: "",
-    oidcPrivateKeyBase64: "",
-    oidcCodeLifetime: 60,
-    oidcClientEdocumentId: "",
-    oidcClientEdocumentSecret: "",
-    oidcClientEdocumentRedirectUri: "",
     allowOrigin:process.env.ALLOW_ORIGIN,
     domain:process.env.DOMAIN,
 

@@ -1,3 +1,5 @@
+> Historical document: superseded on 2026-11-04. External session storage and federated sign-in have been removed. See README.md for current setup.
+
 # Community Redis Session and OIDC Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

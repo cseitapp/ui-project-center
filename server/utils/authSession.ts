@@ -79,13 +79,6 @@ export function safeCommunityProfile(user: Record<string, unknown>): SafeCommuni
   ) as SafeCommunityProfile;
 }
 
-export async function findCommunityProfile(userName: string): Promise<SafeCommunityProfile | null> {
-  const normalized = userName.trim().toUpperCase();
-  if (!normalized) return null;
-  const profile = await getAuthSessionStore().findProfile(normalized);
-  return profile ? safeCommunityProfile(profile) : null;
-}
-
 export async function createAuthSession(
   event: H3Event,
   user: Record<string, unknown>,
@@ -94,7 +87,7 @@ export async function createAuthSession(
   const profile = safeCommunityProfile(user);
   const now = Date.now();
   if (event.context?.authSessionId) {
-    await getAuthSessionStore().delete(event.context.authSessionId, event.context.auth?.USER_NAME);
+    await getAuthSessionStore().delete(event.context.authSessionId);
   }
   event.context ??= {};
   event.context.sessions = {};
@@ -137,7 +130,7 @@ export async function readAuthSession(event: H3Event): Promise<void> {
     ? await getAuthSessionStore().get(session.id) as StoredSession | null
     : null;
   if (!stored || stored.expiresAt <= Date.now()) {
-    if (session.id) await getAuthSessionStore().delete(session.id, stored?.user.USER_NAME);
+    if (session.id) await getAuthSessionStore().delete(session.id);
     deleteCookie(event, name, options.cookie || {});
     return;
   }
@@ -149,7 +142,7 @@ export async function readAuthSession(event: H3Event): Promise<void> {
 export async function clearAuthSession(event: H3Event): Promise<void> {
   const options = sessionOptions();
   if (event.context.authSessionId) {
-    await getAuthSessionStore().delete(event.context.authSessionId, event.context.auth?.USER_NAME);
+    await getAuthSessionStore().delete(event.context.authSessionId);
   }
   deleteCookie(event, options.name!, options.cookie || {});
   event.context.auth = null;

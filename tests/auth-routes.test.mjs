@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createJiti } from "jiti";
 import * as h3 from "h3";
-import { FakeRedis } from "./helpers/fake-redis.mjs";
 
 Object.assign(globalThis, h3);
 const runtime = {
@@ -18,7 +17,7 @@ const runtime = {
 globalThis.useRuntimeConfig = () => runtime;
 const jiti = createJiti(import.meta.url);
 const { createAuthSessionStore, setAuthSessionStoreForTests } = await jiti.import("../server/utils/authSessionStore.ts");
-setAuthSessionStoreForTests(createAuthSessionStore(new FakeRedis(), "community:test:"));
+setAuthSessionStoreForTests(createAuthSessionStore());
 const authMiddleware = await jiti.import("../server/middleware/auth.ts", { default: true });
 
 function appWith(handler) {

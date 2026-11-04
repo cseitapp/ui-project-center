@@ -4,7 +4,6 @@ import test from "node:test";
 import { createJiti } from "jiti";
 import CryptoJS from "crypto-js";
 import * as h3 from "h3";
-import { FakeRedis } from "./helpers/fake-redis.mjs";
 
 Object.assign(globalThis, h3);
 const runtime = {
@@ -18,7 +17,7 @@ const runtime = {
 globalThis.useRuntimeConfig = () => runtime;
 const jiti = createJiti(import.meta.url);
 const { createAuthSessionStore, setAuthSessionStoreForTests } = await jiti.import("../server/utils/authSessionStore.ts");
-const testStore = createAuthSessionStore(new FakeRedis(), "community:test:");
+const testStore = createAuthSessionStore();
 setAuthSessionStoreForTests(testStore);
 
 function appWith(...handlers) {
@@ -104,13 +103,12 @@ test("forged and legacy AES cookies fail closed", async () => {
   ));
 });
 
-test("temporary Redis failure does not invalidate a valid browser session cookie", async () => {
+test("temporary session store failure does not invalidate a valid browser session cookie", async () => {
   const cookie = (await issueSession()).split(";")[0];
   const authMiddleware = await jiti.import("../server/middleware/auth.ts", { default: true });
   setAuthSessionStoreForTests({
-    get: async () => { throw new Error("redis unavailable"); },
+    get: async () => { throw new Error("session store unavailable"); },
     set: async () => {},
-    findProfile: async () => null,
     delete: async () => {},
   });
   const originalConsoleError = console.error;

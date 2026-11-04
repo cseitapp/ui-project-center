@@ -51,9 +51,6 @@ Required runtime variables:
 NUXT_SESSION_PASSWORD=
 NUXT_AUTH_COOKIE_NAME=community-session
 NUXT_COOKIE_LIFE=86400
-NUXT_REDIS_URL=redis://redis:6379
-NUXT_SESSION_PREFIX=community:session:
-NUXT_OIDC_ADAPTER_PREFIX=community:oidc:
 ```
 
 All values used by Nuxt runtime configuration must use their `NUXT_` names in
@@ -67,47 +64,14 @@ During the legacy-cookie migration, set `NUXT_LEGACY_AUTH_COOKIE_NAME` and
 example `.cselao.la`). This lets Community expire both host-only and
 parent-domain legacy cookies. New `community-session` cookies remain host-only.
 
-Community stores login sessions and OIDC provider state in the private Redis
-service declared by Compose. Redis persistence allows sessions and in-flight
-authorization state to survive API restarts and be shared by multiple API
-replicas. Do not publish the Redis port or fall back to process-local memory.
-The first deployment of this migration invalidates the former in-memory
-sessions, so users must log in once after deployment.
+Community stores login sessions in server memory. Run a single API process;
+sessions are not shared across replicas and are lost on restart or deployment.
+Users must log in again after a restart. Expired sessions are removed when read
+or when a new session is created.
 
 Authentication cookies are host-only, HttpOnly, `SameSite=Lax`, and require
 HTTPS in production. The reverse proxy must terminate TLS before production
 traffic reaches this service.
-
-## OIDC provider for first-party systems
-
-Community is the OIDC provider for E-Document. It supports Authorization Code
-flow only, requires PKCE S256, and maps the stable `USER_NAME` value to the OIDC
-`sub` and `preferred_username` claims. Configure these private runtime values:
-
-```dotenv
-NUXT_OIDC_ISSUER=https://community.cselao.la
-NUXT_OIDC_KEY_ID=community-rs256-yyyy-mm
-NUXT_OIDC_PRIVATE_KEY_BASE64=<base64-encoded PKCS8 RSA private key>
-NUXT_OIDC_CODE_LIFETIME=60
-NUXT_OIDC_CLIENT_EDOCUMENT_ID=edocument
-NUXT_OIDC_CLIENT_EDOCUMENT_SECRET=<unique random client secret>
-NUXT_OIDC_CLIENT_EDOCUMENT_REDIRECT_URI=https://edocument.cselao.la/api/auth/oidc/callback
-```
-
-The issuer must be Community's exact public HTTPS origin and the redirect URI
-must exactly match the E-Document runtime configuration. Keep signing keys and
-client secrets in the deployment secret manager; never commit, expose through
-`runtimeConfig.public`, bake into images, or print authorization codes, cookies,
-secrets, tokens, PKCE values, or session data to logs.
-
-The pilot provider publishes one signing key. Rotate it during a coordinated
-maintenance window and expect in-flight authorizations to restart. Implement a
-multi-key JWKS plus an active `kid` before requiring zero-downtime signing-key
-rotation. For client-secret rotation, coordinate the same new value across
-Community and E-Document; in-flight authorizations may need to restart. Manual
-E-Document password login is the phase-one rollback if
-the provider is disabled or unavailable. Community logout remains independent
-from E-Document logout until coordinated single logout is implemented.
 
 ## Production build
 

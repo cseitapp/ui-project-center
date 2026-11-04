@@ -1,3 +1,5 @@
+> Historical document: superseded on 2026-11-04. External session storage and federated sign-in have been removed. See README.md for current setup.
+
 # Community Redis Session and OIDC Design
 
 ## Intent
